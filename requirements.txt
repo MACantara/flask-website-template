@@ -1,0 +1,29 @@
+# Core Flask dependencies
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==4.0.5
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# Form handling and security
+Flask-WTF
+WTForms
+
+# Email support (for contact forms)
+Flask-Mail
+
+# Development and debugging
+Flask-DebugToolbar
+
+# Database drivers
+# SQLite is included with Python, but for other databases:
+# psycopg2-binary  # For PostgreSQL
+# PyMySQL          # For MySQL
+
+# Production server
+gunicorn
+
+# Testing
+pytest
+pytest-flask
