@@ -133,44 +133,50 @@ Visit `http://localhost:5000` to view the website.
 
 ```
 flask-website-template/
-├── app/                        // Main application package
-│   ├── models/                 // Database models
-│   │   ├── __init__.py         // Import all models
-│   │   ├── contact.py          // Contact model
-│   │   └── user.py             // User and PasswordResetToken models
-│   ├── routes/                 // Application routes
-│   │   ├── __init__.py         // Register all blueprints
-│   │   ├── auth.py             // Authentication routes
-│   │   ├── contact.py          // Contact page route
-│   │   ├── main.py             // Main page routes
-│   │   └── password_reset.py   // Password reset routes
-│   ├── static/                 // Static files
-│   │   ├── css/                // CSS styles
-│   │   ├── images/             // Images
-│   │   └── js/                 // JavaScript files
-│   ├── templates/              // HTML templates
-│   │   ├── auth/               // Authentication templates
-│   │   │   ├── login.html      // Login page
-│   │   │   ├── profile.html    // User profile
-│   │   │   └── signup.html     // Registration page
-│   │   ├── password/           // Password reset templates
-│   │   │   ├── forgot-password.html
-│   │   │   └── reset-password.html
-│   │   ├── about.html          // About page template
-│   │   ├── base.html           // Base template with auth navigation
-│   │   ├── contact.html        // Contact page template
-│   │   └── home.html           // Home page template
-│   └── __init__.py             // Application factory
-├── /instance                   // Instance folder for database
-│   └── app.db                  // SQLite Database (if using local dev)
-├── /migrations                 // Database migration files
-├── .env.template               // Environment variables template
-├── .gitignore                  // Git ignore file
-├── config.py                   // Configuration file
-├── README.md                   // This file
-├── requirements.txt            // Dependencies with auth packages
-├── run.py                      // Entry point for the application
-└── vercel.json                 // Vercel deployment configuration
+├── app/                               // Main application package
+│   ├── models/                        // Database models
+│   │   ├── __init__.py                // Import all models
+│   │   ├── contact.py                 // Contact model
+│   │   └── user.py                    // User and PasswordResetToken models
+│   ├── routes/                        // Application routes
+│   │   ├── __init__.py                // Register all blueprints
+│   │   ├── auth.py                    // Authentication routes
+│   │   ├── contact.py                 // Contact page route
+│   │   ├── main.py                    // Main page routes
+│   │   └── password_reset.py          // Password reset routes
+│   ├── static/                        // Static files
+│   │   ├── css/                       // CSS styles
+│   │   │   └── main.css               // Main stylesheet with animations
+│   │   ├── images/                    // Images
+│   │   └── js/                        // JavaScript files
+│   │       └── main.js                // Main JavaScript with theme system
+│   ├── templates/                     // HTML templates
+│   │   ├── auth/                      // Authentication templates
+│   │   │   ├── login.html             // Login page
+│   │   │   └── signup.html            // Registration page
+│   │   ├── partials/                  // Reusable template components
+│   │   │   └── navbar.html            // Navigation with theme switcher
+│   │   ├── password/                  // Password reset templates
+│   │   │   ├── forgot-password.html   // Forgot password page
+│   │   │   └── reset-password.html    // Reset password page
+│   │   ├── profile/                   // Profile management templates
+│   │   │   ├── edit-profile.html      // Edit profile form
+│   │   │   └── profile.html           // User profile page
+│   │   ├── about.html                 // About page template
+│   │   ├── base.html                  // Base template with auth navigation
+│   │   ├── contact.html               // Contact page template
+│   │   └── home.html                  // Home page template
+│   └── __init__.py                    // Application factory
+├── /instance                          // Instance folder for database
+│   └── app.db                         // SQLite Database (if using local dev)
+├── /migrations                        // Database migration files
+├── .env.template                      // Environment variables template
+├── .gitignore                         // Git ignore file
+├── config.py                          // Configuration file with Vercel support
+├── README.md                          // This file
+├── requirements.txt                   // Dependencies with auth packages
+├── run.py                             // Entry point for the application
+└── vercel.json                        // Vercel deployment configuration
 ```
 
 ## Technologies Used
