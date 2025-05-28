@@ -3,57 +3,57 @@
 {% block title %}Sign Up - Flask Website{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
+<div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 animate-fade-in">
+    <div class="max-w-md w-full space-y-8 animate-scale-in">
+        <div class="animate-fade-in-up">
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
                 Create your account
             </h2>
-            <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400 animate-fade-in-up animate-delay-100">
                 Or
-                <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200 hover:underline">
                     sign in to your existing account
                 </a>
             </p>
         </div>
-        <form class="mt-8 space-y-6" method="POST">
+        <form class="mt-8 space-y-6 animate-slide-in-bottom animate-delay-200" method="POST">
             <div class="space-y-4">
-                <div>
-                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
+                <div class="animate-slide-in-bottom animate-delay-300">
+                    <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200">Username</label>
                     <input id="username" name="username" type="text" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                           class="form-input mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200" 
                            placeholder="Choose a username" value="{{ request.form.username }}">
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">3-30 characters, letters, numbers and underscores only</p>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">3-30 characters, letters, numbers and underscores only</p>
                 </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
+                <div class="animate-slide-in-bottom animate-delay-400">
+                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200">Email Address</label>
                     <input id="email" name="email" type="email" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                           class="form-input mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200" 
                            placeholder="Enter your email" value="{{ request.form.email }}">
                 </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <div class="animate-slide-in-bottom animate-delay-500">
+                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200">Password</label>
                     <input id="password" name="password" type="password" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                           class="form-input mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200" 
                            placeholder="Create a password">
-                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">At least 8 characters with uppercase, lowercase, and number</p>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 transition-colors duration-200">At least 8 characters with uppercase, lowercase, and number</p>
                 </div>
 
-                <div>
-                    <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
+                <div class="animate-slide-in-bottom animate-delay-500">
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 transition-colors duration-200">Confirm Password</label>
                     <input id="confirm_password" name="confirm_password" type="password" required 
-                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                           class="form-input mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200" 
                            placeholder="Confirm your password">
                 </div>
             </div>
 
-            <div>
+            <div class="animate-slide-in-bottom animate-delay-500">
                 <button type="submit" 
-                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                        class="form-button group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg">
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <i class="bi bi-person-plus text-blue-500 group-hover:text-blue-400"></i>
+                        <i class="bi bi-person-plus text-blue-500 group-hover:text-blue-400 transition-colors duration-200"></i>
                     </span>
                     Create Account
                 </button>
