@@ -22,7 +22,8 @@ def send_contact_notification(contact_submission):
         admin_msg = Message(
             subject=f'New Contact Form Submission: {contact_submission.subject}',
             sender=current_app.config.get('MAIL_USERNAME'),
-            recipients=[current_app.config.get('MAIL_USERNAME')]  # Send to admin
+            recipients=[current_app.config.get('MAIL_USERNAME')],  # Send to admin
+            reply_to=contact_submission.email  # Add reply-to parameter
         )
         
         admin_msg.body = f"""New contact form submission received:
