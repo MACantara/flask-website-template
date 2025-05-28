@@ -154,8 +154,8 @@ flask-website-template/
 │   │   │   ├── profile.html    // User profile
 │   │   │   └── signup.html     // Registration page
 │   │   ├── password/           // Password reset templates
-│   │   │   ├── forgot_password.html
-│   │   │   └── reset_password.html
+│   │   │   ├── forgot-password.html
+│   │   │   └── reset-password.html
 │   │   ├── about.html          // About page template
 │   │   ├── base.html           // Base template with auth navigation
 │   │   ├── contact.html        // Contact page template

@@ -85,12 +85,12 @@ def forgot_password():
         
         if not email:
             flash('Please provide your email address.', 'error')
-            return render_template('password/forgot_password.html')
+            return render_template('password/forgot-password.html')
         
         # Check if database is disabled (Vercel environment)
         if current_app.config.get('DISABLE_DATABASE', False):
             flash('Password reset is not available in this deployment environment.', 'warning')
-            return render_template('password/forgot_password.html')
+            return render_template('password/forgot-password.html')
         
         # Always show success message for security (don't reveal if email exists)
         flash('If an account with that email exists, we\'ve sent password reset instructions.', 'info')
@@ -108,7 +108,7 @@ def forgot_password():
         
         return redirect(url_for('auth.login'))
     
-    return render_template('password/forgot_password.html')
+    return render_template('password/forgot-password.html')
 
 @password_reset_bp.route('/reset/<token>', methods=['GET', 'POST'])
 def reset_password(token):
@@ -120,7 +120,7 @@ def reset_password(token):
     reset_token = PasswordResetToken.find_valid_token(token)
     if not reset_token:
         flash('Invalid or expired reset link.', 'error')
-        return redirect(url_for('password_reset.forgot_password'))
+        return redirect(url_for('password_reset.forgot-password'))
     
     if request.method == 'POST':
         password = request.form.get('password')
@@ -141,7 +141,7 @@ def reset_password(token):
         if errors:
             for error in errors:
                 flash(error, 'error')
-            return render_template('password/reset_password.html', token=token)
+            return render_template('password/reset-password.html', token=token)
         
         try:
             # Update user password
@@ -160,4 +160,4 @@ def reset_password(token):
             current_app.logger.error(f"Password reset error: {e}")
             flash('Error resetting password. Please try again.', 'error')
     
-    return render_template('password/reset_password.html', token=token)
+    return render_template('password/reset-password.html', token=token)
