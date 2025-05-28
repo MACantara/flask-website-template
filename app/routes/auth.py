@@ -50,7 +50,6 @@ def login():
         remaining_time = LoginAttempt.get_lockout_time_remaining(client_ip)
         if remaining_time:
             minutes = int(remaining_time.total_seconds() / 60) + 1
-            flash(f'Too many failed login attempts. Please try again in {minutes} minutes.', 'error')
             return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes)
     
     if request.method == 'POST':
@@ -73,7 +72,6 @@ def login():
             remaining_time = LoginAttempt.get_lockout_time_remaining(client_ip)
             if remaining_time:
                 minutes = int(remaining_time.total_seconds() / 60) + 1
-                flash(f'Account is locked. Please try again in {minutes} minutes.', 'error')
                 return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes)
         
         # Find user by username or email
@@ -114,7 +112,6 @@ def login():
             
             if failed_count >= max_attempts:
                 lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
-                flash(f'Too many failed login attempts. Account locked for {lockout_minutes} minutes.', 'error')
                 return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
             else:
                 attempts_remaining = max_attempts - failed_count
