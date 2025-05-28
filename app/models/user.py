@@ -7,6 +7,8 @@ import secrets
 ph = PasswordHasher()
 
 class User(db.Model):
+    __tablename__ = 'users'  # Add explicit table name to match foreign key reference
+    
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
@@ -54,8 +56,10 @@ class User(db.Model):
         return f'<User {self.username}>'
 
 class PasswordResetToken(db.Model):
+    __tablename__ = 'password_reset_tokens'  # Add explicit table name for consistency
+    
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Update foreign key reference
     token = db.Column(db.String(255), unique=True, nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     expires_at = db.Column(db.DateTime, nullable=False)
