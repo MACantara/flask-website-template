@@ -44,22 +44,24 @@
             </div>
 
             <!-- Profile Information -->
-            <div class="max-w-2xl mx-auto space-y-6 opacity-0 animate-fade-in-left" style="animation-delay: 0.1s;">
-                <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Username
-                    </label>
-                    <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:shadow-md">
-                        <i class="bi bi-person mr-2 text-gray-500 dark:text-gray-400"></i>{{ user.username }}
+            <div class="max-w-4xl mx-auto opacity-0 animate-fade-in-left" style="animation-delay: 0.1s;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            Username
+                        </label>
+                        <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:shadow-md">
+                            <i class="bi bi-person mr-2 text-gray-500 dark:text-gray-400"></i>{{ user.username }}
+                        </div>
                     </div>
-                </div>
 
-                <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
-                    <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                        Email Address
-                    </label>
-                    <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:shadow-md">
-                        <i class="bi bi-envelope mr-2 text-gray-500 dark:text-gray-400"></i>{{ user.email }}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                            Email Address
+                        </label>
+                        <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 hover:shadow-md">
+                            <i class="bi bi-envelope mr-2 text-gray-500 dark:text-gray-400"></i>{{ user.email }}
+                        </div>
                     </div>
                 </div>
             </div>
