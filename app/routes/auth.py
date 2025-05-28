@@ -1,23 +1,13 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
-from flask_mail import Message
-from app import db, mail
+from app import db
 from app.models.user import User
-from app.models.login_attempt import LoginAttempt
 from app.models.email_verification import EmailVerification
+from app.routes.login_attempts import check_ip_lockout, record_login_attempt, get_remaining_attempts, is_lockout_triggered
+from app.routes.email_verification import create_and_send_verification
 from argon2.exceptions import HashingError
 import re
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
-
-def get_client_ip():
-    """Get the real client IP address, considering proxies."""
-    # Check for forwarded IP first (common in production with reverse proxies)
-    if request.headers.get('X-Forwarded-For'):
-        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
-    elif request.headers.get('X-Real-IP'):
-        return request.headers.get('X-Real-IP')
-    else:
-        return request.remote_addr
 
 def is_valid_email(email):
     """Validate email format."""
@@ -43,84 +33,17 @@ def is_valid_password(password):
         return False, "Password must contain at least one digit"
     return True, "Password is valid"
 
-def send_verification_email(user, verification):
-    """Send email verification email to user."""
-    if not current_app.config.get('MAIL_SERVER'):
-        current_app.logger.warning("Email server not configured for verification")
-        return False
-    
-    try:
-        verification_url = url_for('auth.verify_email', token=verification.token, _external=True)
-        
-        msg = Message(
-            subject='Verify Your Email Address - Flask Template',
-            sender=current_app.config.get('MAIL_USERNAME'),
-            recipients=[user.email]
-        )
-        
-        msg.body = f"""Hello {user.username},
-
-Thank you for registering with Flask Template! To complete your registration, please verify your email address by clicking the link below:
-
-{verification_url}
-
-This verification link will expire in 24 hours.
-
-If you didn't create an account, you can safely ignore this email.
-
-Best regards,
-Flask Template Team
-"""
-        
-        msg.html = f"""
-<html>
-<body>
-    <h2>Verify Your Email Address</h2>
-    <p>Hello <strong>{user.username}</strong>,</p>
-    
-    <p>Thank you for registering with Flask Template! To complete your registration, please verify your email address by clicking the button below:</p>
-    
-    <p style="text-align: center; margin: 30px 0;">
-        <a href="{verification_url}" style="background-color: #3B82F6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block;">
-            Verify Email Address
-        </a>
-    </p>
-    
-    <p>Or copy and paste this link into your browser:</p>
-    <p><a href="{verification_url}">{verification_url}</a></p>
-    
-    <p><small>This verification link will expire in 24 hours.</small></p>
-    
-    <p>If you didn't create an account, you can safely ignore this email.</p>
-    
-    <p>Best regards,<br>Flask Template Team</p>
-</body>
-</html>
-"""
-        
-        mail.send(msg)
-        return True
-        
-    except Exception as e:
-        current_app.logger.error(f"Failed to send verification email: {e}")
-        return False
-
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    client_ip = get_client_ip()
-    
     # Check if IP is locked out
-    if LoginAttempt.is_ip_locked(client_ip):
-        remaining_time = LoginAttempt.get_lockout_time_remaining(client_ip)
-        if remaining_time:
-            minutes = int(remaining_time.total_seconds() / 60) + 1
-            return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes)
+    locked_out, minutes_remaining = check_ip_lockout()
+    if locked_out:
+        return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes_remaining)
     
     if request.method == 'POST':
         username_or_email = request.form.get('username_or_email', '').strip()
         password = request.form.get('password')
         remember_me = request.form.get('remember_me') == 'on'
-        user_agent = request.headers.get('User-Agent')
         
         if not username_or_email or not password:
             flash('Please provide both username/email and password.', 'error')
@@ -132,11 +55,9 @@ def login():
             return render_template('auth/login.html')
         
         # Double-check IP lockout before processing
-        if LoginAttempt.is_ip_locked(client_ip):
-            remaining_time = LoginAttempt.get_lockout_time_remaining(client_ip)
-            if remaining_time:
-                minutes = int(remaining_time.total_seconds() / 60) + 1
-                return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes)
+        locked_out, minutes_remaining = check_ip_lockout()
+        if locked_out:
+            return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes_remaining)
         
         # Find user by username or email
         user = User.query.filter(
@@ -147,22 +68,12 @@ def login():
         if user and user.is_active and user.check_password(password):
             # Check if email is verified
             if not EmailVerification.is_email_verified(user.id, user.email):
-                LoginAttempt.record_attempt(
-                    ip_address=client_ip,
-                    username_or_email=username_or_email,
-                    success=False,
-                    user_agent=user_agent
-                )
+                record_login_attempt(username_or_email, success=False)
                 flash('Please verify your email address before logging in. Check your email for the verification link.', 'warning')
                 return render_template('auth/login.html', show_resend_verification=True, user_email=user.email, user_id=user.id)
             
             # Successful login - record success
-            LoginAttempt.record_attempt(
-                ip_address=client_ip,
-                username_or_email=username_or_email,
-                success=True,
-                user_agent=user_agent
-            )
+            record_login_attempt(username_or_email, success=True)
             
             session['user_id'] = user.id
             session['username'] = user.username
@@ -174,22 +85,14 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
             # Failed login - record failure
-            LoginAttempt.record_attempt(
-                ip_address=client_ip,
-                username_or_email=username_or_email,
-                success=False,
-                user_agent=user_agent
-            )
+            record_login_attempt(username_or_email, success=False)
             
             # Check if this failure causes a lockout
-            failed_count = LoginAttempt.get_failed_attempts_count(client_ip)
-            max_attempts = current_app.config.get('MAX_LOGIN_ATTEMPTS', 5)
-            
-            if failed_count >= max_attempts:
+            if is_lockout_triggered():
                 lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
                 return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
             else:
-                attempts_remaining = max_attempts - failed_count
+                attempts_remaining = get_remaining_attempts()
                 flash(f'Invalid username/email or password. {attempts_remaining} attempts remaining.', 'error')
     
     return render_template('auth/login.html')
@@ -246,11 +149,8 @@ def signup():
             db.session.add(user)
             db.session.commit()
             
-            # Create email verification
-            verification = EmailVerification.create_verification(user.id, email)
-            
-            # Send verification email
-            email_sent = send_verification_email(user, verification)
+            # Create verification and send email
+            verification, email_sent = create_and_send_verification(user)
             
             if email_sent:
                 flash('Account created successfully! Please check your email and click the verification link before logging in.', 'success')
