@@ -30,3 +30,6 @@ gunicorn
 # Testing
 pytest
 pytest-flask
+
+# hCaptcha
+flask-hcaptcha
