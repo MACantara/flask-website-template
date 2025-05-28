@@ -20,36 +20,20 @@ def send_contact_notification(contact_submission):
     try:
         # Email to admin
         admin_msg = Message(
-            subject=f'New Contact Form Submission: {contact_submission.subject}',
+            subject=f'[Contact Form Submission] {contact_submission.subject}',
             sender=current_app.config.get('MAIL_USERNAME'),
             recipients=[current_app.config.get('MAIL_USERNAME')],  # Send to admin
             reply_to=contact_submission.email  # Add reply-to parameter
         )
         
-        admin_msg.body = f"""New contact form submission received:
-
-Name: {contact_submission.name}
-Email: {contact_submission.email}
-Subject: {contact_submission.subject}
-
-Message:
+        admin_msg.body = f"""
 {contact_submission.message}
-
-Submitted at: {contact_submission.created_at.strftime('%Y-%m-%d %H:%M:%S')}
 """
         
         admin_msg.html = f"""
 <html>
 <body>
-    <h2>New Contact Form Submission</h2>
-    <p><strong>Name:</strong> {contact_submission.name}</p>
-    <p><strong>Email:</strong> {contact_submission.email}</p>
-    <p><strong>Subject:</strong> {contact_submission.subject}</p>
-    
-    <h3>Message:</h3>
     <p>{contact_submission.message.replace(chr(10), '<br>')}</p>
-    
-    <p><em>Submitted at: {contact_submission.created_at.strftime('%Y-%m-%d %H:%M:%S')}</em></p>
 </body>
 </html>
 """
