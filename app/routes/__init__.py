@@ -1,11 +1,32 @@
-from .main import main_bp
-from .contact import contact_bp
-from .auth import auth_bp
-from .password_reset import password_reset_bp
+from flask import current_app
 
 def register_blueprints(app):
     """Register all blueprints with the Flask app."""
-    app.register_blueprint(main_bp)
-    app.register_blueprint(contact_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(password_reset_bp)
+    
+    # Import and register main blueprint
+    try:
+        from .main import main_bp
+        app.register_blueprint(main_bp)
+    except ImportError as e:
+        app.logger.warning(f"Could not import main blueprint: {e}")
+    
+    # Import and register contact blueprint
+    try:
+        from .contact import contact_bp
+        app.register_blueprint(contact_bp)
+    except ImportError as e:
+        app.logger.warning(f"Could not import contact blueprint: {e}")
+    
+    # Import and register auth blueprint
+    try:
+        from .auth import auth_bp
+        app.register_blueprint(auth_bp)
+    except ImportError as e:
+        app.logger.warning(f"Could not import auth blueprint: {e}")
+    
+    # Import and register password reset blueprint
+    try:
+        from .password_reset import password_reset_bp
+        app.register_blueprint(password_reset_bp)
+    except ImportError as e:
+        app.logger.warning(f"Could not import password_reset blueprint: {e}")
