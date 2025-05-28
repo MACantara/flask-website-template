@@ -16,27 +16,53 @@
                 </a>
             </p>
         </div>
-        <form class="mt-8 space-y-6 opacity-0 animate-fade-in-left" style="animation-delay: 0.2s;" method="POST">
+
+        <!-- Lockout Warning -->
+        {% if locked_out %}
+        <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="bi bi-shield-x text-red-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
+                        Login Attempts Temporarily Blocked
+                    </h3>
+                    <div class="mt-2 text-sm text-red-700 dark:text-red-300">
+                        <p>Due to multiple failed login attempts, further login attempts from this location have been temporarily blocked for security.</p>
+                        {% if minutes_remaining %}
+                        <p class="mt-1"><strong>Time remaining: {{ minutes_remaining }} minutes</strong></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <form class="mt-8 space-y-6 opacity-0 animate-fade-in-left" style="animation-delay: 0.2s;" method="POST" {% if locked_out %}style="pointer-events: none; opacity: 0.6;"{% endif %}>
             <div class="space-y-4">
                 <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.3s;">
                     <label for="username_or_email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Username or Email</label>
                     <input id="username_or_email" name="username_or_email" type="text" required 
                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 hover:shadow-md"
-                           placeholder="Enter your username or email" value="{{ request.form.username_or_email }}">
+                           placeholder="Enter your username or email" value="{{ request.form.username_or_email }}"
+                           {% if locked_out %}disabled{% endif %}>
                 </div>
                 <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
                     <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Password</label>
                     <input id="password" name="password" type="password" required 
                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 hover:shadow-md"
-                           placeholder="Enter your password">
+                           placeholder="Enter your password"
+                           {% if locked_out %}disabled{% endif %}>
                 </div>
             </div>
 
             <div class="flex items-center justify-between opacity-0 animate-fade-in-up" style="animation-delay: 0.5s;">
                 <div class="flex items-center">
                     <input id="remember_me" name="remember_me" type="checkbox" 
-                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded transition-colors duration-200 cursor-pointer">
-                    <label for="remember_me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300 transition-colors duration-200 cursor-pointer">
+                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded transition-colors duration-200 cursor-pointer"
+                           {% if locked_out %}disabled{% endif %}>
+                    <label for="remember_me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300 transition-colors duration-200 {% if not locked_out %}cursor-pointer{% endif %}">
                         Remember me
                     </label>
                 </div>
@@ -50,12 +76,26 @@
 
             <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.6s;">
                 <button type="submit"   
-                        class="group w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/25 shadow-xl hover:shadow-2xl cursor-pointer hover:scale-105 transform">
-                    <i class="bi bi-box-arrow-in-right mr-3"></i>
-                    <span>Log in</span>
+                        class="group w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/25 shadow-xl hover:shadow-2xl cursor-pointer hover:scale-105 transform {% if locked_out %}opacity-50 cursor-not-allowed{% endif %}"
+                        {% if locked_out %}disabled{% endif %}>
+                    {% if locked_out %}
+                        <i class="bi bi-lock mr-3"></i>
+                        <span>Account Locked</span>
+                    {% else %}
+                        <i class="bi bi-box-arrow-in-right mr-3"></i>
+                        <span>Log in</span>
+                    {% endif %}
                 </button>
             </div>
         </form>
+
+        <!-- Security Info -->
+        <div class="text-center opacity-0 animate-fade-in-up" style="animation-delay: 0.7s;">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+                <i class="bi bi-shield-check mr-1"></i>
+                For security, login attempts are temporarily blocked after {{ config.MAX_LOGIN_ATTEMPTS }} failed attempts
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}

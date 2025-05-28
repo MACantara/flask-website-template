@@ -1,10 +1,21 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from app import db
 from app.models.user import User
+from app.models.login_attempt import LoginAttempt
 from argon2.exceptions import HashingError
 import re
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+
+def get_client_ip():
+    """Get the real client IP address, considering proxies."""
+    # Check for forwarded IP first (common in production with reverse proxies)
+    if request.headers.get('X-Forwarded-For'):
+        return request.headers.get('X-Forwarded-For').split(',')[0].strip()
+    elif request.headers.get('X-Real-IP'):
+        return request.headers.get('X-Real-IP')
+    else:
+        return request.remote_addr
 
 def is_valid_email(email):
     """Validate email format."""
@@ -32,10 +43,20 @@ def is_valid_password(password):
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    client_ip = get_client_ip()
+    
+    # Check if IP is locked out
+    if LoginAttempt.is_ip_locked(client_ip):
+        remaining_time = LoginAttempt.get_lockout_time_remaining(client_ip)
+        if remaining_time:
+            minutes = int(remaining_time.total_seconds() / 60) + 1
+            return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes)
+    
     if request.method == 'POST':
         username_or_email = request.form.get('username_or_email', '').strip()
         password = request.form.get('password')
         remember_me = request.form.get('remember_me') == 'on'
+        user_agent = request.headers.get('User-Agent')
         
         if not username_or_email or not password:
             flash('Please provide both username/email and password.', 'error')
@@ -46,6 +67,13 @@ def login():
             flash('Authentication is not available in this deployment environment.', 'warning')
             return render_template('auth/login.html')
         
+        # Double-check IP lockout before processing
+        if LoginAttempt.is_ip_locked(client_ip):
+            remaining_time = LoginAttempt.get_lockout_time_remaining(client_ip)
+            if remaining_time:
+                minutes = int(remaining_time.total_seconds() / 60) + 1
+                return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes)
+        
         # Find user by username or email
         user = User.query.filter(
             (User.username == username_or_email) | 
@@ -53,7 +81,14 @@ def login():
         ).first()
         
         if user and user.is_active and user.check_password(password):
-            # Successful login
+            # Successful login - record success and clear any failed attempts
+            LoginAttempt.record_attempt(
+                ip_address=client_ip,
+                username_or_email=username_or_email,
+                success=True,
+                user_agent=user_agent
+            )
+            
             session['user_id'] = user.id
             session['username'] = user.username
             session.permanent = remember_me
@@ -63,7 +98,24 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('main.home'))
         else:
-            flash('Invalid username/email or password.', 'error')
+            # Failed login - record failure
+            LoginAttempt.record_attempt(
+                ip_address=client_ip,
+                username_or_email=username_or_email,
+                success=False,
+                user_agent=user_agent
+            )
+            
+            # Check if this failure causes a lockout
+            failed_count = LoginAttempt.get_failed_attempts_count(client_ip)
+            max_attempts = current_app.config.get('MAX_LOGIN_ATTEMPTS', 5)
+            
+            if failed_count >= max_attempts:
+                lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
+                return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
+            else:
+                attempts_remaining = max_attempts - failed_count
+                flash(f'Invalid username/email or password. {attempts_remaining} attempts remaining.', 'error')
     
     return render_template('auth/login.html')
 

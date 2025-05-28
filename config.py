@@ -43,6 +43,10 @@ class Config:
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', 'app/static/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file upload
 
+    # Login security settings
+    MAX_LOGIN_ATTEMPTS = int(os.environ.get('MAX_LOGIN_ATTEMPTS', 5))
+    LOGIN_LOCKOUT_MINUTES = int(os.environ.get('LOGIN_LOCKOUT_MINUTES', 15))
+
 class DevelopmentConfig(Config):
     """Development configuration."""
     DEBUG = True
