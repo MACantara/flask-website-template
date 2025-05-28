@@ -26,10 +26,10 @@
                 </div>
                 <div class="ml-3">
                     <h3 class="text-sm font-medium text-red-800 dark:text-red-200">
-                        Account Temporarily Locked
+                        Login Attempts Temporarily Blocked
                     </h3>
                     <div class="mt-2 text-sm text-red-700 dark:text-red-300">
-                        <p>Due to multiple failed login attempts, this account has been temporarily locked for security.</p>
+                        <p>Due to multiple failed login attempts, further login attempts from this location have been temporarily blocked for security.</p>
                         {% if minutes_remaining %}
                         <p class="mt-1"><strong>Time remaining: {{ minutes_remaining }} minutes</strong></p>
                         {% endif %}
@@ -93,7 +93,7 @@
         <div class="text-center opacity-0 animate-fade-in-up" style="animation-delay: 0.7s;">
             <p class="text-xs text-gray-500 dark:text-gray-400">
                 <i class="bi bi-shield-check mr-1"></i>
-                For security, accounts are temporarily locked after 5 failed attempts
+                For security, login attempts are temporarily blocked after 5 failed attempts
             </p>
         </div>
     </div>
