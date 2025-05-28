@@ -30,3 +30,10 @@ def register_blueprints(app):
         app.register_blueprint(password_reset_bp)
     except ImportError as e:
         app.logger.warning(f"Could not import password_reset blueprint: {e}")
+    
+    # Import and register profile blueprint
+    try:
+        from .profile import profile_bp
+        app.register_blueprint(profile_bp)
+    except ImportError as e:
+        app.logger.warning(f"Could not import profile blueprint: {e}")
