@@ -39,4 +39,4 @@ def contact_page():
 
         return redirect(url_for('contact.contact_page'))
 
-    return render_template('contact.html', title='Contact')
+    return render_template('contact.html')
