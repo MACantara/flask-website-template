@@ -185,7 +185,9 @@ flask-website-template/
 ├── /migrations                        // Database migration files
 ├── .env.template                      // Environment variables template
 ├── .gitignore                         // Git ignore file
+├── .vercelignore                      // Vercel ignore file
 ├── config.py                          // Configuration file with Vercel support
+├── LICENSE                            // MIT License
 ├── README.md                          // This file
 ├── requirements.txt                   // Dependencies with auth packages
 ├── run.py                             // Entry point for the application
