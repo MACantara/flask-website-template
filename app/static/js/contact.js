@@ -162,4 +162,224 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+    
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea');
+    
+    // Character counter for message textarea
+    const messageTextarea = document.getElementById('message');
+    const maxLength = 2000;
+    
+    if (messageTextarea) {
+        // Create character counter
+        const counterDiv = document.createElement('div');
+        counterDiv.className = 'text-xs text-gray-500 dark:text-gray-400 mt-1 text-right';
+        counterDiv.id = 'message-counter';
+        messageTextarea.parentNode.appendChild(counterDiv);
+        
+        function updateCounter() {
+            const remaining = maxLength - messageTextarea.value.length;
+            counterDiv.textContent = `${messageTextarea.value.length}/${maxLength} characters`;
+            
+            if (remaining < 100) {
+                counterDiv.className = 'text-xs text-orange-500 dark:text-orange-400 mt-1 text-right';
+            } else if (remaining < 50) {
+                counterDiv.className = 'text-xs text-red-500 dark:text-red-400 mt-1 text-right';
+            } else {
+                counterDiv.className = 'text-xs text-gray-500 dark:text-gray-400 mt-1 text-right';
+            }
+        }
+        
+        messageTextarea.addEventListener('input', updateCounter);
+        updateCounter(); // Initial count
+    }
+    
+    // Real-time validation
+    function validateField(field) {
+        const value = field.value.trim();
+        let isValid = true;
+        let errorMessage = '';
+        
+        // Remove existing error styling
+        field.classList.remove('border-red-500', 'border-green-500');
+        
+        switch (field.id) {
+            case 'name':
+                if (value.length < 2) {
+                    isValid = false;
+                    errorMessage = 'Name must be at least 2 characters';
+                } else if (value.length > 100) {
+                    isValid = false;
+                    errorMessage = 'Name must be less than 100 characters';
+                }
+                break;
+                
+            case 'email':
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) {
+                    isValid = false;
+                    errorMessage = 'Please enter a valid email address';
+                } else if (value.length > 120) {
+                    isValid = false;
+                    errorMessage = 'Email address is too long';
+                }
+                break;
+                
+            case 'subject':
+                if (value.length < 3) {
+                    isValid = false;
+                    errorMessage = 'Subject must be at least 3 characters';
+                } else if (value.length > 200) {
+                    isValid = false;
+                    errorMessage = 'Subject must be less than 200 characters';
+                }
+                break;
+                
+            case 'message':
+                if (value.length < 10) {
+                    isValid = false;
+                    errorMessage = 'Message must be at least 10 characters';
+                } else if (value.length > 2000) {
+                    isValid = false;
+                    errorMessage = 'Message must be less than 2000 characters';
+                }
+                break;
+        }
+        
+        // Apply styling
+        if (value.length > 0) {
+            if (isValid) {
+                field.classList.add('border-green-500');
+            } else {
+                field.classList.add('border-red-500');
+            }
+        }
+        
+        // Show/hide error message
+        let errorDiv = field.parentNode.querySelector('.field-error');
+        if (!isValid && value.length > 0) {
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'field-error text-xs text-red-500 mt-1';
+                field.parentNode.appendChild(errorDiv);
+            }
+            errorDiv.textContent = errorMessage;
+        } else if (errorDiv) {
+            errorDiv.remove();
+        }
+        
+        return isValid;
+    }
+    
+    // Add blur event listeners for real-time validation
+    inputs.forEach(input => {
+        input.addEventListener('blur', () => validateField(input));
+        input.addEventListener('input', () => {
+            // Clear validation styling on input
+            if (input.value.trim() === '') {
+                input.classList.remove('border-red-500', 'border-green-500');
+                const errorDiv = input.parentNode.querySelector('.field-error');
+                if (errorDiv) errorDiv.remove();
+            }
+        });
+    });
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        let isFormValid = true;
+        
+        // Validate all fields
+        inputs.forEach(input => {
+            if (!validateField(input)) {
+                isFormValid = false;
+            }
+        });
+        
+        if (!isFormValid) {
+            e.preventDefault();
+            
+            // Show error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-800 dark:text-red-200 px-4 py-3 rounded-xl mb-4';
+            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle mr-2"></i>Please correct the errors above before submitting.';
+            
+            // Remove existing error message
+            const existingError = form.querySelector('.form-error');
+            if (existingError) existingError.remove();
+            
+            errorDiv.className += ' form-error';
+            form.insertBefore(errorDiv, form.firstChild);
+            
+            // Scroll to first error
+            const firstError = form.querySelector('.border-red-500');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.focus();
+            }
+            
+            return;
+        }
+        
+        // Show loading state
+        const originalText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="bi bi-arrow-clockwise mr-3 animate-spin"></i><span>Sending...</span>';
+        
+        // Remove any existing error messages
+        const existingError = form.querySelector('.form-error');
+        if (existingError) existingError.remove();
+        
+        // Re-enable button after 3 seconds (fallback)
+        setTimeout(() => {
+            if (submitButton.disabled) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        }, 3000);
+    });
+    
+    // Auto-resize textarea
+    if (messageTextarea) {
+        messageTextarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    }
+    
+    // Form auto-save to localStorage (optional)
+    const formData = {};
+    
+    function saveFormData() {
+        inputs.forEach(input => {
+            formData[input.id] = input.value;
+        });
+        localStorage.setItem('contactFormData', JSON.stringify(formData));
+    }
+    
+    function loadFormData() {
+        const saved = localStorage.getItem('contactFormData');
+        if (saved) {
+            const data = JSON.parse(saved);
+            inputs.forEach(input => {
+                if (data[input.id]) {
+                    input.value = data[input.id];
+                }
+            });
+        }
+    }
+    
+    // Load saved data on page load
+    loadFormData();
+    
+    // Save data on input
+    inputs.forEach(input => {
+        input.addEventListener('input', saveFormData);
+    });
+    
+    // Clear saved data on successful submission
+    form.addEventListener('submit', function() {
+        if (form.checkValidity()) {
+            localStorage.removeItem('contactFormData');
+        }
+    });
 });
