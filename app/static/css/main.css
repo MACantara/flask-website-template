@@ -76,6 +76,17 @@ html {
     }
 }
 
+@keyframes formSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @keyframes pulse {
     0%, 100% {
         opacity: 1;
@@ -109,6 +120,10 @@ html {
     animation: slideInFromBottom 0.5s ease-out forwards;
 }
 
+.animate-form-slide-in {
+    animation: formSlideIn 0.4s ease-out forwards;
+}
+
 .animate-pulse-slow {
     animation: pulse 2s ease-in-out infinite;
 }
@@ -128,25 +143,25 @@ html {
     transform: translateY(0);
 }
 
-/* Stagger animation delays for form elements */
+/* Unified animation delays - shorter and more cohesive */
+.animate-delay-50 {
+    animation-delay: 0.05s;
+}
+
 .animate-delay-100 {
     animation-delay: 0.1s;
+}
+
+.animate-delay-150 {
+    animation-delay: 0.15s;
 }
 
 .animate-delay-200 {
     animation-delay: 0.2s;
 }
 
-.animate-delay-300 {
-    animation-delay: 0.3s;
-}
-
-.animate-delay-400 {
-    animation-delay: 0.4s;
-}
-
-.animate-delay-500 {
-    animation-delay: 0.5s;
+.animate-delay-250 {
+    animation-delay: 0.25s;
 }
 
 /* Floating label animation */
