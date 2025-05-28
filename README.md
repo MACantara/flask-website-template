@@ -8,14 +8,15 @@ A modern Flask-based website template featuring Home, About, and Contact pages w
 - Responsive design with Tailwind CSS
 - Bootstrap Icons integration
 - SQLite database
-- Contact form functionality
+- Contact form functionality with email notifications
 - **Complete Authentication System (Login/Signup/Password Reset)**
+- **Advanced Security Features (Account Lockout, IP-based Rate Limiting)**
 - **Three-way theme system (Light/Dark/System)**
 - Accessible and user-friendly interface
 
 ## Authentication System
 
-This template includes a complete user authentication system with:
+This template includes a complete user authentication system with advanced security features:
 
 ### 🔐 User Authentication
 - **User Registration**: Secure signup with username and email
@@ -30,17 +31,28 @@ This template includes a complete user authentication system with:
 - **Email Integration**: Flask-Mail integration with Gmail SMTP support
 - **Password Validation**: Strong password requirements
 
-### 🛡️ Security Features
+### 🛡️ Advanced Security Features
+- **Account Lockout**: IP-based rate limiting to prevent brute force attacks
+- **Configurable Attempts**: Customizable maximum login attempts (default: 5)
+- **Lockout Duration**: Configurable lockout time (default: 15 minutes)
+- **Real-time Feedback**: Shows remaining attempts and lockout time
+- **IP Tracking**: Tracks failed attempts by IP address to prevent circumvention
+- **User Agent Logging**: Records browser/device information for security analysis
+- **Automatic Cleanup**: Built-in cleanup for old login attempt records
+
+### 🔒 Security Implementation Details
 - **Argon2 Hashing**: Industry-standard password hashing
 - **CSRF Protection**: Built-in CSRF protection with Flask-WTF
 - **Secure Sessions**: HTTPOnly and SameSite cookie settings
 - **Input Validation**: Comprehensive form validation
 - **Error Handling**: Secure error handling that doesn't leak information
+- **Proxy Support**: Proper IP detection behind reverse proxies (X-Forwarded-For, X-Real-IP)
 
 ### 📧 Email Configuration
-The system supports email functionality for password resets:
+The system supports email functionality for password resets and contact form notifications:
 - Gmail SMTP integration
 - HTML and plain text email templates
+- Reply-to functionality for contact form emails
 - Configurable email settings via environment variables
 
 ## Theme System
@@ -118,7 +130,7 @@ Edit the `.env` file with your configuration values, especially:
 ### 6. Initialize Database
 ```bash
 flask db init
-flask db migrate -m "Initial migration with authentication"
+flask db migrate -m "Initial migration with authentication and login attempts"
 flask db upgrade
 ```
 
@@ -137,11 +149,12 @@ flask-website-template/
 │   ├── models/                        // Database models
 │   │   ├── __init__.py                // Import all models
 │   │   ├── contact.py                 // Contact model
+│   │   ├── login_attempt.py           // Login attempt tracking model
 │   │   └── user.py                    // User and PasswordResetToken models
 │   ├── routes/                        // Application routes
 │   │   ├── __init__.py                // Register all blueprints
-│   │   ├── auth.py                    // Authentication routes
-│   │   ├── contact.py                 // Contact page route
+│   │   ├── auth.py                    // Authentication routes with lockout
+│   │   ├── contact.py                 // Contact page route with email notifications
 │   │   ├── main.py                    // Main page routes
 │   │   └── password_reset.py          // Password reset routes
 │   ├── static/                        // Static files
@@ -192,6 +205,56 @@ flask-website-template/
 - Bootstrap Icons
 - HTML5/CSS3/JavaScript
 
+## Environment Variables
+
+The application uses the following environment variables:
+
+### Core Configuration
+```bash
+FLASK_APP=run.py
+FLASK_ENV=development
+DATABASE_URL=sqlite:///app.db
+DEBUG=True
+```
+
+### Email Configuration
+```bash
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=true
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+```
+
+### Security Settings
+```bash
+MAX_LOGIN_ATTEMPTS=5           # Maximum failed login attempts before lockout
+LOGIN_LOCKOUT_MINUTES=15       # Duration of account lockout in minutes
+PERMANENT_SESSION_LIFETIME=2592000  # Session lifetime in seconds (30 days)
+```
+
+### Application Settings
+```bash
+POSTS_PER_PAGE=10
+UPLOAD_FOLDER=app/static/uploads
+```
+
+## Security Features
+
+### Account Lockout System
+- **IP-based Tracking**: Prevents attackers from switching accounts to bypass limits
+- **Configurable Thresholds**: Administrators can adjust attempt limits and lockout duration
+- **Real-time Feedback**: Users see remaining attempts and lockout countdown
+- **Automatic Recovery**: Accounts unlock automatically after the specified time period
+- **Database Logging**: All login attempts are logged for security analysis
+- **Cleanup Mechanism**: Old login attempt records are automatically cleaned up
+
+### Contact Form Security
+- **Email Notifications**: Automatic notifications to administrators
+- **Reply-to Headers**: Direct email replies go to the original sender
+- **Input Validation**: Comprehensive validation of all form fields
+- **Rate Limiting**: Could be extended to include rate limiting for contact submissions
+
 ## Deployment
 
 ### Vercel Deployment
@@ -204,6 +267,13 @@ This template is configured for easy deployment on Vercel with automatic databas
 - **Authentication Disabled**: User authentication is disabled in Vercel environment
 - **Contact Form**: Still functional but logs submissions instead of storing in database
 - **Environment Variables**: Configure via Vercel dashboard
+
+#### Security Considerations for Production:
+- **HTTPS Required**: Enable HTTPS for secure cookie handling
+- **Environment Variables**: Set all security-related variables in production
+- **Database Migration**: Use PostgreSQL or MySQL for production deployments
+- **Email Configuration**: Configure production email server
+- **Session Security**: Enable secure cookie settings in production
 
 #### Deploy to Vercel:
 
@@ -275,6 +345,20 @@ with app.app_context():
     admin.set_password('secure_password')
     db.session.add(admin)
     db.session.commit()
+```
+
+### Monitoring Login Attempts
+```python
+from app.models.login_attempt import LoginAttempt
+
+# Check failed attempts for an IP
+failed_count = LoginAttempt.get_failed_attempts_count('192.168.1.1')
+
+# Check if IP is locked
+is_locked = LoginAttempt.is_ip_locked('192.168.1.1')
+
+# Clean up old records (30+ days old)
+cleaned = LoginAttempt.cleanup_old_attempts(days_old=30)
 ```
 
 ### Checking User Authentication in Templates
