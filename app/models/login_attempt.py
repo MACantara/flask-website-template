@@ -1,6 +1,7 @@
 from app import db
 from datetime import datetime, timedelta
 from sqlalchemy import Index
+from flask import current_app
 
 class LoginAttempt(db.Model):
     __tablename__ = 'login_attempts'
@@ -22,8 +23,10 @@ class LoginAttempt(db.Model):
         return f'<LoginAttempt {self.ip_address} at {self.attempted_at}>'
     
     @classmethod
-    def get_failed_attempts_count(cls, ip_address, time_window_minutes=15):
+    def get_failed_attempts_count(cls, ip_address, time_window_minutes=None):
         """Get count of failed login attempts for an IP within time window."""
+        if time_window_minutes is None:
+            time_window_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
         cutoff_time = datetime.utcnow() - timedelta(minutes=time_window_minutes)
         return cls.query.filter(
             cls.ip_address == ip_address,
@@ -32,14 +35,20 @@ class LoginAttempt(db.Model):
         ).count()
     
     @classmethod
-    def is_ip_locked(cls, ip_address, max_attempts=5, lockout_minutes=15):
+    def is_ip_locked(cls, ip_address, max_attempts=None, lockout_minutes=None):
         """Check if IP is locked out based on failed attempts."""
+        if max_attempts is None:
+            max_attempts = current_app.config.get('MAX_LOGIN_ATTEMPTS', 5)
+        if lockout_minutes is None:
+            lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
         failed_count = cls.get_failed_attempts_count(ip_address, lockout_minutes)
         return failed_count >= max_attempts
     
     @classmethod
-    def get_lockout_time_remaining(cls, ip_address, lockout_minutes=15):
+    def get_lockout_time_remaining(cls, ip_address, lockout_minutes=None):
         """Get remaining lockout time for an IP address."""
+        if lockout_minutes is None:
+            lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
         cutoff_time = datetime.utcnow() - timedelta(minutes=lockout_minutes)
         last_failed = cls.query.filter(
             cls.ip_address == ip_address,
