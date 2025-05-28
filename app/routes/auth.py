@@ -69,7 +69,6 @@ def login():
             # Check if email is verified
             if not EmailVerification.is_email_verified(user.id, user.email):
                 record_login_attempt(username_or_email, success=False)
-                flash('Please verify your email address before logging in. Check your email for the verification link.', 'warning')
                 return render_template('auth/login.html', show_resend_verification=True, user_email=user.email, user_id=user.id)
             
             # Successful login - record success
