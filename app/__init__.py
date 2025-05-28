@@ -1,10 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_mail import Mail
 from config import config
 
+# Initialize extensions
 db = SQLAlchemy()
 migrate = Migrate()
+mail = Mail()
 
 def create_app(config_name=None):
     app = Flask(__name__)
@@ -22,6 +25,13 @@ def create_app(config_name=None):
     else:
         # Initialize a dummy db for compatibility
         db.init_app(app)
+    
+    # Initialize Flask-Mail
+    mail.init_app(app)
+
+    # Import models to ensure they are registered with SQLAlchemy
+    if not app.config.get('DISABLE_DATABASE', False):
+        from app.models import Contact, User, PasswordResetToken
 
     # Register blueprints
     from app.routes import register_blueprints

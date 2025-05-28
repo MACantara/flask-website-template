@@ -1,10 +1,10 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from app import db
 from app.models.contact import Contact
 
-contact = Blueprint('contact', __name__)
+contact_bp = Blueprint('contact', __name__)
 
-@contact.route('/contact', methods=['GET', 'POST'])
+@contact_bp.route('/contact', methods=['GET', 'POST'])
 def contact_page():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -39,4 +39,4 @@ def contact_page():
 
         return redirect(url_for('contact.contact_page'))
 
-    return render_template('contact.html', title='Contact')
+    return render_template('contact.html')
