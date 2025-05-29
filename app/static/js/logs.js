@@ -84,7 +84,9 @@ function showLoadingState(message = 'Loading...') {
     if (!loadingOverlay) {
         loadingOverlay = document.createElement('div');
         loadingOverlay.id = 'log-loading-overlay';
-        loadingOverlay.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        loadingOverlay.className = 'fixed inset-0 flex items-center justify-center z-50';
+        loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        loadingOverlay.style.backdropFilter = 'blur(2px)';
         
         loadingOverlay.innerHTML = `
             <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-4 shadow-xl">
