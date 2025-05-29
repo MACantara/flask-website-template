@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
 from config import config
+import os
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -13,9 +14,7 @@ def create_app(config_name=None):
     app = Flask(__name__)
     
     # Load configuration
-    if config_name is None:
-        config_name = 'development'
-    
+    config_name = config_name or os.environ.get('FLASK_CONFIG', 'default')
     app.config.from_object(config[config_name])
 
     # Initialize extensions only if database is not disabled
@@ -28,6 +27,10 @@ def create_app(config_name=None):
     
     # Initialize Flask-Mail
     mail.init_app(app)
+
+    # Initialize hCaptcha
+    from app.utils.hcaptcha_utils import init_hcaptcha
+    init_hcaptcha(app)
 
     # Import models to ensure they are registered with SQLAlchemy
     if not app.config.get('DISABLE_DATABASE', False):
@@ -51,4 +54,8 @@ def create_app(config_name=None):
             from datetime import datetime
             return {'current_year': datetime.now().year}
 
+    # Make hCaptcha available in templates
+    from app.utils.hcaptcha_utils import hcaptcha, is_hcaptcha_enabled
+    app.jinja_env.globals.update(hcaptcha=hcaptcha, hcaptcha_enabled=is_hcaptcha_enabled)
+    
     return app

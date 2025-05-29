@@ -9,9 +9,9 @@ A modern Flask-based website template featuring Home, About, and Contact pages w
 - Bootstrap Icons integration
 - SQLite database
 - Contact form functionality with email notifications
-- **Complete Authentication System (Login/Signup/Password Reset)**
-- **Advanced Security Features (Account Lockout, IP-based Rate Limiting)**
-- **Three-way theme system (Light/Dark/System)**
+- Complete Authentication System (Login/Signup/Password Reset)
+- Advanced Security Features (Account Lockout, IP-based Rate Limiting)
+- Three-way theme system (Light/Dark/System)
 - Accessible and user-friendly interface
 
 ## Authentication System

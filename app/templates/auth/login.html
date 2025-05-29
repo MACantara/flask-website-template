@@ -100,6 +100,13 @@
                 </div>
             </div>
 
+            <!-- hCaptcha -->
+            {% if hcaptcha_enabled() %}
+            <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.55s;">
+                {{ hcaptcha }}
+            </div>
+            {% endif %}
+
             <div class="opacity-0 animate-fade-in-up" style="animation-delay: 0.6s;">
                 <button type="submit"   
                         class="group w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-lg rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/25 shadow-xl hover:shadow-2xl cursor-pointer hover:scale-105 transform {% if locked_out %}opacity-50 cursor-not-allowed{% endif %}"
@@ -124,4 +131,9 @@
         </div>
     </div>
 </div>
+
+<!-- Include hCaptcha handler script -->
+{% if hcaptcha_enabled() %}
+<script src="{{ url_for('static', filename='js/hcaptcha-handler.js') }}"></script>
+{% endif %}
 {% endblock %}

@@ -46,6 +46,11 @@ class Config:
     # Login security settings
     MAX_LOGIN_ATTEMPTS = int(os.environ.get('MAX_LOGIN_ATTEMPTS', 5))
     LOGIN_LOCKOUT_MINUTES = int(os.environ.get('LOGIN_LOCKOUT_MINUTES', 15))
+    
+    # hCaptcha settings
+    HCAPTCHA_ENABLED = os.environ.get('HCAPTCHA_ENABLED', 'True').lower() in ['true', 'on', '1']
+    HCAPTCHA_SITE_KEY = os.environ.get('HCAPTCHA_SITE_KEY', '')
+    HCAPTCHA_SECRET_KEY = os.environ.get('HCAPTCHA_SECRET_KEY', '')
 
 class DevelopmentConfig(Config):
     """Development configuration."""
