@@ -1,0 +1,22 @@
+<!-- Actions -->
+<div class="mt-8 space-y-3">
+    {% if user.id != session.user_id %}
+    <form method="POST" action="{{ url_for('admin.toggle_user_status', user_id=user.id) }}" class="w-full">
+        <button type="submit" class="w-full {{ 'bg-red-600 hover:bg-red-700' if user.is_active else 'bg-green-600 hover:bg-green-700' }} text-white px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer">
+            <i class="bi {{ 'bi-person-x' if user.is_active else 'bi-person-check' }} mr-2"></i>
+            {{ 'Deactivate User' if user.is_active else 'Activate User' }}
+        </button>
+    </form>
+
+    <form method="POST" action="{{ url_for('admin.toggle_admin_status', user_id=user.id) }}" class="w-full">
+        <button type="submit" class="w-full {{ 'bg-orange-600 hover:bg-orange-700' if user.is_admin else 'bg-purple-600 hover:bg-purple-700' }} text-white px-4 py-2 rounded-lg transition-colors duration-200 cursor-pointer">
+            <i class="bi {{ 'bi-shield-x' if user.is_admin else 'bi-shield-check' }} mr-2"></i>
+            {{ 'Revoke Admin' if user.is_admin else 'Grant Admin' }}
+        </button>
+    </form>
+    {% else %}
+    <p class="text-sm text-gray-500 dark:text-gray-400 text-center py-4">
+        You cannot modify your own account from here.
+    </p>
+    {% endif %}
+</div>
