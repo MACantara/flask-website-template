@@ -1,4 +1,5 @@
 import dropdownManager from './utils/dropdown-toggle.js';
+import { paginationHelper } from './utils/pagination.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dropdown manager
@@ -106,10 +107,16 @@ function switchTab(tabName) {
 }
 
 /**
- * Initialize pagination functionality for admin pages (non-logs)
+ * Initialize pagination functionality for admin pages
  */
 function initializeAdminPagination() {
-    // Handle items per page change for admin user pages
+    // Initialize pagination containers
+    const paginationContainers = document.querySelectorAll('.pagination-container');
+    paginationContainers.forEach(container => {
+        paginationHelper.initializePagination(container);
+    });
+    
+    // Handle items per page change for admin user pages (legacy support)
     const perPageSelects = document.querySelectorAll('#perPage:not([id="perPageFilter"])');
     perPageSelects.forEach(select => {
         select.addEventListener('change', function() {
@@ -126,7 +133,64 @@ function changeAdminItemsPerPage(perPage) {
     const currentUrl = new URL(window.location);
     currentUrl.searchParams.set('per_page', perPage);
     currentUrl.searchParams.delete('page'); // Reset to first page when changing items per page
+    
+    showAdminLoadingState('Updating page size...');
     window.location.href = currentUrl.toString();
+}
+
+/**
+ * Show loading state for admin operations
+ * @param {string} message - Loading message to display
+ */
+function showAdminLoadingState(message = 'Loading...') {
+    // Create or update loading overlay
+    let loadingOverlay = document.getElementById('admin-loading-overlay');
+    
+    if (!loadingOverlay) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'admin-loading-overlay';
+        loadingOverlay.className = 'fixed inset-0 flex items-center justify-center z-50';
+        loadingOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        loadingOverlay.style.backdropFilter = 'blur(2px)';
+        
+        loadingOverlay.innerHTML = `
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-sm mx-4 shadow-xl">
+                <div class="flex items-center space-x-3">
+                    <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <span class="text-gray-900 dark:text-white font-medium" id="admin-loading-message">${message}</span>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(loadingOverlay);
+    } else {
+        document.getElementById('admin-loading-message').textContent = message;
+        loadingOverlay.classList.remove('hidden');
+    }
+}
+
+/**
+ * Initialize admin-specific dropdown functionality
+ */
+function initializeAdminDropdowns() {
+    // Register admin-specific dropdowns with the dropdown manager
+    const adminDropdowns = document.querySelectorAll('[id*="admin"], [id*="user"]');
+    adminDropdowns.forEach(dropdown => {
+        const toggleButton = document.querySelector(`[data-dropdown-toggle="${dropdown.id}"]`);
+        if (toggleButton) {
+            // Register with dropdown manager
+            dropdownManager.register(dropdown.id, toggleButton, dropdown);
+        }
+    });
+
+    // Listen for dropdown events for admin-specific logic
+    document.addEventListener('dropdown:open', function(event) {
+        const { dropdownId } = event.detail;
+        if (dropdownId && (dropdownId.includes('admin') || dropdownId.includes('user'))) {
+            // Admin-specific logic when dropdown opens
+            console.log('Admin dropdown opened:', dropdownId);
+        }
+    });
 }
 
 /**
@@ -188,25 +252,37 @@ function showAdminAlert(message, type = 'info') {
 }
 
 /**
- * Initialize admin-specific dropdown functionality
+ * Make admin AJAX requests with proper loading states
+ * @param {string} url - The URL to request
+ * @param {Object} options - Request options
+ * @returns {Promise} - The fetch promise
  */
-function initializeAdminDropdowns() {
-    // Register admin-specific dropdowns with the dropdown manager
-    const adminDropdowns = document.querySelectorAll('[id*="admin"], [id*="user"]');
-    adminDropdowns.forEach(dropdown => {
-        const toggleButton = document.querySelector(`[data-dropdown-toggle="${dropdown.id}"]`);
-        if (toggleButton) {
-            // Register with dropdown manager
-            dropdownManager.register(dropdown.id, toggleButton, dropdown);
+function adminAjaxRequest(url, options = {}) {
+    showAdminLoadingState('Processing request...');
+    
+    return fetch(url, {
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            ...options.headers
+        },
+        ...options
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    });
-
-    // Listen for dropdown events for admin-specific logic
-    document.addEventListener('dropdown:open', function(event) {
-        const { dropdownId } = event.detail;
-        if (dropdownId && (dropdownId.includes('admin') || dropdownId.includes('user'))) {
-            // Admin-specific logic when dropdown opens
-            console.log('Admin dropdown opened:', dropdownId);
+        return response.json();
+    })
+    .catch(error => {
+        console.error('Admin request failed:', error);
+        showAdminAlert('Request failed. Please try again.', 'error');
+        throw error;
+    })
+    .finally(() => {
+        const loadingOverlay = document.getElementById('admin-loading-overlay');
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
         }
     });
 }
@@ -225,6 +301,14 @@ export {
 window.adminJS = {
     switchTab,
     showAdminAlert,
+    showAdminLoadingState,
     adminAjaxRequest,
-    initializeAdminDropdowns
+    initializeAdminDropdowns,
+    paginationHelper
 };
+
+// Register admin-specific alert and loading functions for pagination
+if (typeof window !== 'undefined') {
+    window.showPaginationAlert = showAdminAlert;
+    window.showPaginationLoadingState = showAdminLoadingState;
+}

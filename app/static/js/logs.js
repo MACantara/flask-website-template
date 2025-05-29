@@ -1,3 +1,5 @@
+import { paginationHelper } from './utils/pagination.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize log-specific functionality
     initializeLogTypeChange();
@@ -40,9 +42,15 @@ function changeLogType() {
  * Initialize pagination functionality for logs
  */
 function initializeLogPagination() {
-    // Handle items per page change for filter selector
+    // Initialize pagination containers using centralized system
+    const paginationContainers = document.querySelectorAll('.pagination-container');
+    paginationContainers.forEach(container => {
+        paginationHelper.initializePagination(container);
+    });
+    
+    // Handle legacy per page filter if it exists without pagination container
     const perPageFilter = document.getElementById('perPageFilter');
-    if (perPageFilter) {
+    if (perPageFilter && !perPageFilter.closest('.pagination-container')) {
         perPageFilter.addEventListener('change', function() {
             changeItemsPerPage(this.value);
         });
@@ -230,5 +238,12 @@ window.logsJS = {
     changeItemsPerPage,
     showLogAlert,
     showLoadingState,
-    hideLoadingState
+    hideLoadingState,
+    paginationHelper
 };
+
+// Register log-specific alert and loading functions for pagination
+if (typeof window !== 'undefined') {
+    window.showPaginationAlert = showLogAlert;
+    window.showPaginationLoadingState = showLoadingState;
+}
