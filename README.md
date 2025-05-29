@@ -14,7 +14,7 @@ A modern Flask-based website template featuring Home, About, and Contact pages w
 - Three-way theme system (Light/Dark/System)
 - Accessible and user-friendly interface
 - Legal Compliance Pages with 14-day change notice period
-- **Comprehensive Admin Panel** with user management and system monitoring
+- Comprehensive Admin Panel with user management and system monitoring
 
 ## Admin Panel
 
