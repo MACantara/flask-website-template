@@ -4,6 +4,7 @@
  */
 
 import dropdownManager from './utils/dropdown-toggle.js';
+import paginationHelper from './utils/pagination-helper.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dropdown manager
@@ -11,7 +12,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initializePaginationDropdown();
     initializePageJump();
+    initializePaginationContainers();
 });
+
+/**
+ * Initialize pagination containers using the helper utility
+ */
+function initializePaginationContainers() {
+    const paginationContainers = document.querySelectorAll('.pagination-container');
+    paginationContainers.forEach(container => {
+        paginationHelper.initializePagination(container);
+    });
+}
 
 /**
  * Initialize pagination dropdown functionality
