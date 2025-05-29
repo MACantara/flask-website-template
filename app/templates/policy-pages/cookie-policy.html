@@ -19,8 +19,8 @@
             
             <div class="px-8 py-6 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800">
                 <div class="flex items-center justify-between text-sm text-orange-800 dark:text-orange-200">
-                    <span><strong>Last Updated:</strong> {{ current_date.strftime('%B %d, %Y') }}</span>
-                    <span><strong>Effective Date:</strong> {{ current_date.strftime('%B %d, %Y') }}</span>
+                    <span><strong>Last Updated:</strong> {{ date_updated.strftime('%B %d, %Y') }}</span>
+                    <span><strong>Effective Date:</strong> {{ date_effective.strftime('%B %d, %Y') }}</span>
                 </div>
             </div>
         </div>
@@ -233,7 +233,7 @@
 
                 <div class="mt-8 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl">
                     <p class="text-orange-800 dark:text-orange-200 text-sm">
-                        <strong>Last Updated:</strong> {{ current_date.strftime('%B %d, %Y') }} • This policy complies with applicable privacy laws and regulations.
+                        <strong>Last Updated:</strong> {{ date_updated.strftime('%B %d, %Y') }} • This policy complies with applicable privacy laws and regulations.
                     </p>
                 </div>
             </div>
