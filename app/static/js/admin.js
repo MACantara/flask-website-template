@@ -1,8 +1,14 @@
+import dropdownManager from './dropdown-toggle.js';
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dropdown manager
+    dropdownManager.init();
+    
     // Initialize admin functionality
     initializeConfirmationDialogs();
     initializeTabSwitching();
     initializeAdminPagination();
+    initializeAdminDropdowns();
 });
 
 /**
@@ -182,45 +188,43 @@ function showAdminAlert(message, type = 'info') {
 }
 
 /**
- * Handle AJAX requests for admin actions
- * @param {string} url - The URL to send the request to
- * @param {string} method - The HTTP method (GET, POST, etc.)
- * @param {Object} data - The data to send with the request
- * @returns {Promise} - Promise that resolves with the response
+ * Initialize admin-specific dropdown functionality
  */
-async function adminAjaxRequest(url, method = 'GET', data = null) {
-    const config = {
-        method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
+function initializeAdminDropdowns() {
+    // Register admin-specific dropdowns with the dropdown manager
+    const adminDropdowns = document.querySelectorAll('[id*="admin"], [id*="user"]');
+    adminDropdowns.forEach(dropdown => {
+        const toggleButton = document.querySelector(`[data-dropdown-toggle="${dropdown.id}"]`);
+        if (toggleButton) {
+            // Register with dropdown manager
+            dropdownManager.register(dropdown.id, toggleButton, dropdown);
         }
-    };
-    
-    if (data && method !== 'GET') {
-        config.body = JSON.stringify(data);
-    }
-    
-    try {
-        const response = await fetch(url, config);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    });
+
+    // Listen for dropdown events for admin-specific logic
+    document.addEventListener('dropdown:open', function(event) {
+        const { dropdownId } = event.detail;
+        if (dropdownId && (dropdownId.includes('admin') || dropdownId.includes('user'))) {
+            // Admin-specific logic when dropdown opens
+            console.log('Admin dropdown opened:', dropdownId);
         }
-        
-        return await response.json();
-    } catch (error) {
-        console.error('Admin AJAX request failed:', error);
-        showAdminAlert('An error occurred while processing your request.', 'error');
-        throw error;
-    }
+    });
 }
 
 /**
  * Export functions for use in other scripts if needed
  */
+export {
+    switchTab,
+    showAdminAlert,
+    adminAjaxRequest,
+    initializeAdminDropdowns
+};
+
+// Legacy global export
 window.adminJS = {
     switchTab,
     showAdminAlert,
-    adminAjaxRequest
+    adminAjaxRequest,
+    initializeAdminDropdowns
 };

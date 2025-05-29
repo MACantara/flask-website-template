@@ -3,7 +3,12 @@
  * Handles pagination dropdown functionality and page navigation
  */
 
+import dropdownManager from './dropdown-toggle.js';
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dropdown manager
+    dropdownManager.init();
+    
     initializePaginationDropdown();
     initializePageJump();
 });
@@ -12,75 +17,34 @@ document.addEventListener('DOMContentLoaded', function() {
  * Initialize pagination dropdown functionality
  */
 function initializePaginationDropdown() {
-    // Handle pagination dropdown buttons
+    // Register pagination-specific dropdowns with the dropdown manager
     const paginationDropdowns = document.querySelectorAll('[id^="page-dropdown-"]');
     paginationDropdowns.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const dropdownId = this.getAttribute('data-dropdown-toggle');
-            togglePaginationDropdown(dropdownId);
-        });
-    });
-
-    // Close pagination dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        const paginationMenus = document.querySelectorAll('[id^="page-menu-"]');
-        const paginationButtons = document.querySelectorAll('[id^="page-dropdown-"]');
+        const dropdownId = button.getAttribute('data-dropdown-toggle');
+        const dropdown = document.getElementById(dropdownId);
         
-        let clickedOnMenu = false;
-        let clickedOnButton = false;
-        
-        // Check if clicked on pagination menu or its children
-        paginationMenus.forEach(menu => {
-            if (menu.contains(event.target)) {
-                clickedOnMenu = true;
-            }
-        });
-        
-        // Check if clicked on pagination button
-        paginationButtons.forEach(button => {
-            if (button.contains(event.target)) {
-                clickedOnButton = true;
-            }
-        });
-        
-        // Close all pagination dropdowns if clicked outside
-        if (!clickedOnMenu && !clickedOnButton) {
-            paginationMenus.forEach(menu => {
-                menu.classList.add('hidden');
-            });
+        if (dropdown) {
+            // Register with dropdown manager
+            dropdownManager.register(dropdownId, button, dropdown);
         }
     });
 
-    // Close pagination dropdowns on escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const paginationMenus = document.querySelectorAll('[id^="page-menu-"]');
-            paginationMenus.forEach(menu => {
-                menu.classList.add('hidden');
-            });
+    // Listen for dropdown events if needed for pagination-specific logic
+    document.addEventListener('dropdown:open', function(event) {
+        const { dropdownId } = event.detail;
+        if (dropdownId && dropdownId.includes('page-menu')) {
+            // Pagination-specific logic when dropdown opens
+            console.log('Pagination dropdown opened:', dropdownId);
         }
     });
 }
 
 /**
- * Toggle pagination dropdown
+ * Toggle pagination dropdown (legacy support)
  * @param {string} dropdownId - The ID of the dropdown to toggle
  */
 function togglePaginationDropdown(dropdownId) {
-    const dropdown = document.getElementById(dropdownId);
-    if (!dropdown) return;
-    
-    // Close all other pagination dropdowns first
-    const allPaginationMenus = document.querySelectorAll('[id^="page-menu-"]');
-    allPaginationMenus.forEach(menu => {
-        if (menu.id !== dropdownId) {
-            menu.classList.add('hidden');
-        }
-    });
-    
-    // Toggle the clicked dropdown
-    dropdown.classList.toggle('hidden');
+    dropdownManager.toggle(dropdownId);
 }
 
 /**
@@ -330,6 +294,19 @@ if (document.querySelector('[id^="page-dropdown-"], #jumpToPage')) {
 /**
  * Export functions for use in other scripts
  */
+export {
+    togglePaginationDropdown,
+    jumpToPage,
+    changeItemsPerPage,
+    navigateToPage,
+    showPaginationAlert,
+    showPaginationLoadingState,
+    hidePaginationLoadingState,
+    initializePaginationDropdown,
+    initializePageJump
+};
+
+// Legacy global export
 window.paginationJS = {
     togglePaginationDropdown,
     jumpToPage,

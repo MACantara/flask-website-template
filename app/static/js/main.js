@@ -1,5 +1,10 @@
+import dropdownManager from './dropdown-toggle.js';
+
 // Mobile menu toggle
 document.addEventListener("DOMContentLoaded", function () {
+    // Initialize dropdown manager
+    dropdownManager.init();
+    
     const mobileMenuButton = document.getElementById("mobile-menu-button");
     const mobileMenu = document.getElementById("mobile-menu");
 
@@ -77,20 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     animateElements.forEach((el) => observer.observe(el));
     
     // Mobile menu toggle functionality
-    setupDropdownEventListeners();
 });
-
-// Setup dropdown event listeners
-function setupDropdownEventListeners() {
-    // Add event listeners for all dropdown toggle buttons
-    document.querySelectorAll('[data-dropdown-toggle]').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const dropdownId = this.getAttribute('data-dropdown-toggle');
-            toggleDropdown(dropdownId);
-        });
-    });
-}
 
 // Utility functions
 function showAlert(message, type = "success") {
@@ -250,57 +242,5 @@ function validateEmail(email) {
 
 // Dropdown functionality
 function toggleDropdown(dropdownId) {
-    const dropdown = document.getElementById(dropdownId);
-    if (!dropdown) return;
-    
-    // Close all other dropdowns first
-    const allDropdowns = document.querySelectorAll('[id$="Dropdown"], [id$="-menu"]');
-    allDropdowns.forEach(d => {
-        if (d.id !== dropdownId) {
-            d.classList.add('hidden');
-        }
-    });
-    
-    // Toggle the clicked dropdown
-    dropdown.classList.toggle('hidden');
+    dropdownManager.toggle(dropdownId);
 }
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', function(event) {
-    const dropdowns = document.querySelectorAll('[id$="Dropdown"], [id$="-menu"]');
-    const dropdownButtons = document.querySelectorAll('[data-dropdown-toggle]');
-    
-    let clickedOnDropdown = false;
-    let clickedOnButton = false;
-    
-    // Check if clicked on dropdown or its children
-    dropdowns.forEach(dropdown => {
-        if (dropdown.contains(event.target)) {
-            clickedOnDropdown = true;
-        }
-    });
-    
-    // Check if clicked on dropdown button
-    dropdownButtons.forEach(button => {
-        if (button.contains(event.target)) {
-            clickedOnButton = true;
-        }
-    });
-    
-    // Close all dropdowns if clicked outside
-    if (!clickedOnDropdown && !clickedOnButton) {
-        dropdowns.forEach(dropdown => {
-            dropdown.classList.add('hidden');
-        });
-    }
-});
-
-// Close dropdowns on escape key
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        const dropdowns = document.querySelectorAll('[id$="Dropdown"], [id$="-menu"]');
-        dropdowns.forEach(dropdown => {
-            dropdown.classList.add('hidden');
-        });
-    }
-});
