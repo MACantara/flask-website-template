@@ -9,28 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     flashMessageManager.init();
     themeManager.init();
     
-    const mobileMenuButton = document.getElementById("mobile-menu-button");
-    const mobileMenu = document.getElementById("mobile-menu");
-
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener("click", function () {
-            mobileMenu.classList.toggle("hidden");
-        });
-    }
-
-    // Close mobile menu when clicking outside
-    document.addEventListener("click", function (event) {
-        const mobileMenu = document.getElementById("mobile-menu");
-        const mobileMenuButton = document.getElementById("mobile-menu-button");
-        
-        if (
-            mobileMenu &&
-            !mobileMenu.contains(event.target) &&
-            !mobileMenuButton.contains(event.target)
-        ) {
-            mobileMenu.classList.add("hidden");
-        }
-    });
+    // Initialize mobile menu using dropdown manager
+    initializeMobileMenu();
 
     // Close alert messages
     const closeAlertButtons = document.querySelectorAll(".close-alert");
@@ -84,9 +64,23 @@ document.addEventListener("DOMContentLoaded", function () {
         ".feature-card, .mission-card"
     );
     animateElements.forEach((el) => observer.observe(el));
-    
-    // Mobile menu toggle functionality
 });
+
+/**
+ * Initialize mobile menu using dropdown manager
+ */
+function initializeMobileMenu() {
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    if (mobileMenuButton && mobileMenu) {
+        // Register mobile menu with dropdown manager
+        dropdownManager.register("mobile-menu", mobileMenuButton, mobileMenu);
+        
+        // Add data attribute for consistency with other dropdowns
+        mobileMenuButton.setAttribute("data-dropdown-toggle", "mobile-menu");
+    }
+}
 
 // Utility functions
 function showAlert(message, type = "success") {
