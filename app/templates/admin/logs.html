@@ -42,7 +42,7 @@
 
                 <!-- Export Button -->
                 <div class="flex-shrink-0">
-                    <a href="{{ url_for('admin.export_logs', type=log_type) }}" 
+                    <a href="{{ url_for('logs.export_logs', type=log_type) }}" 
                        class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
                         <i class="bi bi-file-earmark-arrow-down mr-2"></i>
                         Export Logs
@@ -179,14 +179,14 @@
                     </div>
                     <div class="flex space-x-2">
                         {% if pagination.has_prev %}
-                            <a href="{{ url_for('admin.logs', type=log_type, page=pagination.prev_num) }}" 
+                            <a href="{{ url_for('logs.logs', type=log_type, page=pagination.prev_num) }}" 
                                class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Previous</a>
                         {% endif %}
                         
                         {% for page_num in pagination.iter_pages() %}
                             {% if page_num %}
                                 {% if page_num != pagination.page %}
-                                    <a href="{{ url_for('admin.logs', type=log_type, page=page_num) }}" 
+                                    <a href="{{ url_for('logs.logs', type=log_type, page=page_num) }}" 
                                        class="px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500">{{ page_num }}</a>
                                 {% else %}
                                     <span class="px-3 py-1 bg-blue-600 text-white rounded">{{ page_num }}</span>
@@ -197,7 +197,7 @@
                         {% endfor %}
                         
                         {% if pagination.has_next %}
-                            <a href="{{ url_for('admin.logs', type=log_type, page=pagination.next_num) }}" 
+                            <a href="{{ url_for('logs.logs', type=log_type, page=pagination.next_num) }}" 
                                class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Next</a>
                         {% endif %}
                     </div>
@@ -214,7 +214,7 @@
 function changeLogType() {
     const select = document.getElementById('logType');
     const selectedType = select.value;
-    window.location.href = `{{ url_for('admin.logs') }}?type=${selectedType}`;
+    window.location.href = `{{ url_for('logs.logs') }}?type=${selectedType}`;
 }
 </script>
 {% endblock %}

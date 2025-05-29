@@ -16,7 +16,7 @@
                     <a href="{{ url_for('admin.users') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
                         <i class="bi bi-people mr-2"></i>Manage Users
                     </a>
-                    <a href="{{ url_for('admin.logs') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                    <a href="{{ url_for('logs.logs') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
                         <i class="bi bi-file-text mr-2"></i>View Logs
                     </a>
                 </div>
@@ -131,7 +131,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-right" style="animation-delay: 0.3s;">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Login Activity</h2>
-                    <a href="{{ url_for('admin.logs') }}" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">View all logs</a>
+                    <a href="{{ url_for('logs.logs', type='login_attempts') }}" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">View all logs</a>
                 </div>
                 <div class="space-y-3">
                     {% for attempt in recent_login_logs %}
@@ -171,7 +171,7 @@
                     <i class="bi bi-person-x mr-2"></i>
                     View Inactive Users
                 </a>
-                <a href="{{ url_for('admin.logs', type='email_verifications') }}" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                <a href="{{ url_for('logs.logs', type='email_verifications') }}" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center">
                     <i class="bi bi-envelope-exclamation mr-2"></i>
                     Pending Verifications
                 </a>
