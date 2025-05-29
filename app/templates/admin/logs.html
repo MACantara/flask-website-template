@@ -108,7 +108,7 @@
 
                     <!-- Pagination controls -->
                     {% if pagination.pages > 1 %}
-                    <div class="flex items-center space-x-1">
+                    <div class="flex items-center">
                         <!-- Previous button -->
                         {% if pagination.has_prev %}
                         <a href="{{ url_for('logs.logs', type=log_type, page=pagination.prev_num, per_page=request.args.get('per_page', '25')) }}"
@@ -362,7 +362,7 @@
 
                     <!-- Pagination controls -->
                     {% if pagination.pages > 1 %}
-                    <div class="flex items-center space-x-1">
+                    <div class="flex items-center">
                         <!-- Previous button -->
                         {% if pagination.has_prev %}
                         <a href="{{ url_for('logs.logs', type=log_type, page=pagination.prev_num, per_page=request.args.get('per_page', '25')) }}"
