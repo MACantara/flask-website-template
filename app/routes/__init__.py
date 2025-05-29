@@ -6,6 +6,8 @@ from .password_reset import password_reset_bp
 from .login_attempts import login_attempts_bp
 from .email_verification import email_verification_bp
 from .profile import profile_bp
+from .admin import admin_bp
+from .logs import logs_bp
 
 def register_blueprints(app):
     """Register all blueprints with the Flask app."""
@@ -16,3 +18,5 @@ def register_blueprints(app):
     app.register_blueprint(login_attempts_bp)
     app.register_blueprint(email_verification_bp)
     app.register_blueprint(profile_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(logs_bp)

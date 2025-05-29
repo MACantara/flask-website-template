@@ -9,11 +9,49 @@ A modern Flask-based website template featuring Home, About, and Contact pages w
 - Bootstrap Icons integration
 - SQLite database
 - Contact form functionality with email notifications
-- Complete Authentication System (Login/Signup/Password Reset)
-- Advanced Security Features (Account Lockout, IP-based Rate Limiting)
+- Complete Authentication System (Login/Signup/Password Reset/Profile Management)
+- Advanced Security Features (Account Lockout, IP-based Rate Limiting, Session Management)
 - Three-way theme system (Light/Dark/System)
 - Accessible and user-friendly interface
 - Legal Compliance Pages with 14-day change notice period
+- Comprehensive Admin Panel with user management and system monitoring
+
+## Admin Panel
+
+This template includes a powerful admin panel for site management:
+
+### 🛡️ Admin Features
+- **User Management**: View, activate/deactivate users, grant/revoke admin privileges
+- **System Monitoring**: Dashboard with real-time statistics and activity logs
+- **Security Logs**: Monitor login attempts, account lockouts, and security events
+- **Email Verification Tracking**: Monitor email verification status and history
+- **Contact Form Management**: View and manage contact form submissions
+- **Data Cleanup Tools**: Automated cleanup of old logs and expired tokens
+
+### 📊 Admin Dashboard
+- **Real-time Statistics**: Total users, active accounts, recent registrations
+- **Activity Monitoring**: Recent login attempts, failed logins, security events
+- **User Analytics**: Registration trends, verification rates, account status
+- **Quick Actions**: Cleanup tools, user management shortcuts
+
+### 🔐 Admin Access
+- **Default Admin Account**: username: `admin`, password: `admin123` (change in production!)
+- **Role-based Access**: Admin-only routes with decorator protection
+- **Security Features**: IP-based lockout protection, session management
+
+### 📋 Log Management
+- **Login Attempts**: Monitor successful and failed login attempts with IP tracking
+- **User Registrations**: Track new account creation and verification status
+- **Email Verifications**: Monitor email verification requests and completion
+- **Contact Submissions**: View contact form submissions and responses
+- **Automated Cleanup**: Remove old logs and expired tokens automatically
+
+### 🎯 Admin Routes
+- `/admin/` - Main dashboard with statistics and recent activity
+- `/admin/users` - User management with search and filtering
+- `/admin/user/<id>` - Detailed user information and activity history
+- `/admin/logs` - System logs with pagination and filtering
+- `/admin/cleanup` - Database cleanup and maintenance tools
 
 ## Legal Compliance
 
@@ -177,53 +215,125 @@ Visit `http://localhost:5000` to view the website.
 
 ```
 flask-website-template/
-├── app/                               // Main application package
-│   ├── models/                        // Database models
-│   │   ├── __init__.py                // Import all models
-│   │   ├── contact.py                 // Contact model
-│   │   ├── login_attempt.py           // Login attempt tracking model
-│   │   └── user.py                    // User and PasswordResetToken models
-│   ├── routes/                        // Application routes
-│   │   ├── __init__.py                // Register all blueprints
-│   │   ├── auth.py                    // Authentication routes with lockout
-│   │   ├── contact.py                 // Contact page route with email notifications
-│   │   ├── main.py                    // Main page routes
-│   │   └── password_reset.py          // Password reset routes
-│   ├── static/                        // Static files
-│   │   ├── css/                       // CSS styles
-│   │   │   └── main.css               // Main stylesheet with animations
-│   │   ├── images/                    // Images
-│   │   └── js/                        // JavaScript files
-│   │       └── main.js                // Main JavaScript with theme system
-│   ├── templates/                     // HTML templates
-│   │   ├── auth/                      // Authentication templates
-│   │   │   ├── login.html             // Login page
-│   │   │   └── signup.html            // Registration page
-│   │   ├── partials/                  // Reusable template components
-│   │   │   └── navbar.html            // Navigation with theme switcher
-│   │   ├── password/                  // Password reset templates
-│   │   │   ├── forgot-password.html   // Forgot password page
-│   │   │   └── reset-password.html    // Reset password page
-│   │   ├── profile/                   // Profile management templates
-│   │   │   ├── edit-profile.html      // Edit profile form
-│   │   │   └── profile.html           // User profile page
-│   │   ├── about.html                 // About page template
-│   │   ├── base.html                  // Base template with auth navigation
-│   │   ├── contact.html               // Contact page template
-│   │   └── home.html                  // Home page template
-│   └── __init__.py                    // Application factory
-├── /instance                          // Instance folder for database
-│   └── app.db                         // SQLite Database (if using local dev)
-├── /migrations                        // Database migration files
-├── .env.template                      // Environment variables template
-├── .gitignore                         // Git ignore file
-├── .vercelignore                      // Vercel ignore file
-├── config.py                          // Configuration file with Vercel support
-├── LICENSE                            // MIT License
-├── README.md                          // This file
-├── requirements.txt                   // Dependencies with auth packages
-├── run.py                             // Entry point for the application
-└── vercel.json                        // Vercel deployment configuration
+├── app/                                                    // Main application package
+│   ├── models/                                             // Database models
+│   │   ├── __init__.py                                     // Import all database models
+│   │   ├── contact.py                                      // Contact form submission model
+│   │   ├── email_verification.py                           // Email verification model
+│   │   ├── login_attempt.py                                // Login attempt tracking model
+│   │   └── user.py                                         // User and PasswordResetToken models
+│   ├── routes/                                             // Application routes
+│   │   ├── __init__.py                                     // Register all blueprints
+│   │   ├── admin.py                                        // Admin panel routes and user management
+│   │   ├── auth.py                                         // Authentication routes with lockout
+│   │   ├── contact.py                                      // Contact page route with email notifications
+│   │   ├── email_verification.py                           // Email verification handling
+│   │   ├── login_attempts.py                               // Login attempt tracking utilities
+│   │   ├── logs.py                                         // Admin logs management
+│   │   ├── main.py                                         // Main page routes and policy pages
+│   │   ├── password_reset.py                               // Password reset routes
+│   │   └── profile.py                                      // User profile management
+│   ├── static/                                             // Static files
+│   │   ├── css/                                            // CSS styles
+│   │   │   ├── about.css                                   // About page specific styles
+│   │   │   ├── contact.css                                 // Contact page specific styles
+│   │   │   ├── home.css                                    // Home page specific styles
+│   │   │   └── main.css                                    // Main stylesheet with animations
+│   │   ├── images/                                         // Images directory
+│   │   └── js/                                             // JavaScript files
+│   │       ├── utils/                                      // Utility JavaScript modules
+│   │       │   ├── pagination/                             // Pagination utility modules
+│   │       │   │   ├── controls.js                         // Pagination controls (buttons, selectors)
+│   │       │   │   ├── core.js                             // Core pagination functionality
+│   │       │   │   ├── interactions.js                     // User interactions and event handling
+│   │       │   │   └── mobile.js                           // Mobile-specific pagination components
+│   │       │   ├── theme/                                  // Theme management modules
+│   │       │   │   ├── theme-initializator.js              // Theme initialization
+│   │       │   │   └── theme-manager.js                    // Theme switching logic
+│   │       │   ├── dropdown-toggle.js                      // Dropdown functionality
+│   │       │   ├── flash-messages.js                       // Flash message handling
+│   │       │   └── pagination.js                           // Main pagination entry point
+│   │       ├── about.js                                    // About page functionality
+│   │       ├── admin.js                                    // Admin panel functionality
+│   │       ├── contact.js                                  // Contact page functionality
+│   │       ├── home.js                                     // Home page functionality
+│   │       ├── logs.js                                     // Admin logs functionality
+│   │       └── main.js                                     // Main JavaScript with utilities
+│   ├── templates/                                          // HTML templates
+│   │   ├── admin/                                          // Admin panel templates
+│   │   │   ├── dashboard.html                              // Admin dashboard
+│   │   │   ├── logs.html                                   // System logs view
+│   │   │   ├── user_detail.html                            // User detail page
+│   │   │   └── users.html                                  // User management
+│   │   ├── auth/                                           // Authentication templates
+│   │   │   ├── login.html                                  // Login page
+│   │   │   └── signup.html                                 // Registration page
+│   │   ├── partials/                                       // Reusable template components
+│   │   │   ├── admin/                                      // Admin-specific partials
+│   │   │   │   ├── dashboard/                              // Dashboard components
+│   │   │   │   │   ├── header.html                         // Dashboard header
+│   │   │   │   │   ├── login_activity.html                 // Login activity widget
+│   │   │   │   │   ├── quick_actions.html                  // Quick action buttons
+│   │   │   │   │   ├── recent_users.html                   // Recent users widget
+│   │   │   │   │   └── stats_cards.html                    // Statistics cards
+│   │   │   │   ├── logs/                                   // Log management components
+│   │   │   │   │   ├── empty_state.html                    // Empty state display
+│   │   │   │   │   ├── filters.html                        // Log filtering controls
+│   │   │   │   │   ├── header.html                         // Logs page header
+│   │   │   │   │   ├── table.html                          // Logs table structure
+│   │   │   │   │   └── table_row.html                      // Individual log row
+│   │   │   │   ├── user-details/                           // User detail components
+│   │   │   │   │   ├── activity_tabs.html                  // Activity tabs
+│   │   │   │   │   ├── email_verifications_tab.html        // Email verification tab
+│   │   │   │   │   ├── header.html                         // User detail header
+│   │   │   │   │   ├── login_attempts_tab.html             // Login attempts tab
+│   │   │   │   │   ├── user_actions.html                   // User action buttons
+│   │   │   │   │   └── user_info.html                      // User information display
+│   │   │   │   └── users/                                  // User management components
+│   │   │   │       ├── empty_state.html                    // Empty state for user list
+│   │   │   │       ├── filters.html                        // User filtering controls
+│   │   │   │       ├── header.html                         // Users page header
+│   │   │   │       ├── table.html                          // Users table structure
+│   │   │   │       └── table_row.html                      // Individual user row
+│   │   │   ├── shared/                                     // Shared components
+│   │   │   │   └── pagination.html                         // Reusable pagination component
+│   │   │   ├── footer.html                                 // Site footer
+│   │   │   └── navbar.html                                 // Navigation with theme switcher
+│   │   ├── password/                                       // Password reset templates
+│   │   │   ├── forgot-password.html                        // Forgot password page
+│   │   │   └── reset-password.html                         // Reset password page
+│   │   ├── policy-pages/                                   // Legal policy templates
+│   │   │   ├── cookie-policy.html                          // Cookie policy page
+│   │   │   ├── privacy-policy.html                         // Privacy policy page
+│   │   │   └── terms-of-service.html                       // Terms of service page
+│   │   ├── profile/                                        // Profile management templates
+│   │   │   ├── edit-profile.html                           // Edit profile form
+│   │   │   └── profile.html                                // User profile page
+│   │   ├── about.html                                      // About page template
+│   │   ├── base.html                                       // Base template with auth navigation
+│   │   ├── contact.html                                    // Contact page template
+│   │   └── home.html                                       // Home page template
+│   ├── utils/                                              // Utility modules
+│   │   └── hcaptcha_utils.py                               // hCaptcha integration utilities
+│   └── __init__.py                                         // Application factory
+├── instance/                                               // Instance folder for database
+│   └── app.db                                              // SQLite Database (if using local dev)
+├── migrations/                                             // Database migration files
+│   ├── versions/                                           // Migration version files
+│   │   └── add_admin_field.py                              // Admin field migration
+│   ├── alembic.ini                                         // Alembic configuration
+│   ├── env.py                                              // Migration environment
+│   ├── README                                              // Migration readme
+│   └── script.py.mako                                      // Migration script template
+├── .env.template                                           // Environment variables template
+├── .gitignore                                              // Git ignore file
+├── .vercelignore                                           // Vercel ignore file
+├── config.py                                               // Configuration file with Vercel support
+├── LICENSE                                                 // MIT License
+├── README.md                                               // This file
+├── requirements.txt                                        // Dependencies with auth packages
+├── run.py                                                  // Entry point for the application
+└── vercel.json                                             // Vercel deployment configuration
 ```
 
 ## Technologies Used
