@@ -11,6 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Close mobile menu when clicking outside
     document.addEventListener("click", function (event) {
+        const mobileMenu = document.getElementById("mobile-menu");
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        
         if (
             mobileMenu &&
             !mobileMenu.contains(event.target) &&
@@ -72,7 +75,22 @@ document.addEventListener("DOMContentLoaded", function () {
         ".feature-card, .mission-card"
     );
     animateElements.forEach((el) => observer.observe(el));
+    
+    // Mobile menu toggle functionality
+    setupDropdownEventListeners();
 });
+
+// Setup dropdown event listeners
+function setupDropdownEventListeners() {
+    // Add event listeners for all dropdown toggle buttons
+    document.querySelectorAll('[data-dropdown-toggle]').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdownId = this.getAttribute('data-dropdown-toggle');
+            toggleDropdown(dropdownId);
+        });
+    });
+}
 
 // Utility functions
 function showAlert(message, type = "success") {
@@ -210,19 +228,6 @@ function validateEmail(email) {
         const currentTheme = getThemePreference();
         updateThemeButtons(currentTheme);
 
-        // Toggle dropdown visibility
-        themeToggle?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            themeMenu?.classList.toggle('hidden');
-            themeMenuMobile?.classList.add('hidden');
-        });
-
-        themeToggleMobile?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            themeMenuMobile?.classList.toggle('hidden');
-            themeMenu?.classList.add('hidden');
-        });
-
         // Handle theme selection
         document.querySelectorAll('[data-theme]').forEach(button => {
             button.addEventListener('click', (e) => {
@@ -249,7 +254,7 @@ function toggleDropdown(dropdownId) {
     if (!dropdown) return;
     
     // Close all other dropdowns first
-    const allDropdowns = document.querySelectorAll('[id$="Dropdown"]');
+    const allDropdowns = document.querySelectorAll('[id$="Dropdown"], [id$="-menu"]');
     allDropdowns.forEach(d => {
         if (d.id !== dropdownId) {
             d.classList.add('hidden');
@@ -262,8 +267,8 @@ function toggleDropdown(dropdownId) {
 
 // Close dropdowns when clicking outside
 document.addEventListener('click', function(event) {
-    const dropdowns = document.querySelectorAll('[id$="Dropdown"]');
-    const dropdownButtons = document.querySelectorAll('[onclick*="toggleDropdown"]');
+    const dropdowns = document.querySelectorAll('[id$="Dropdown"], [id$="-menu"]');
+    const dropdownButtons = document.querySelectorAll('[data-dropdown-toggle]');
     
     let clickedOnDropdown = false;
     let clickedOnButton = false;
@@ -293,7 +298,7 @@ document.addEventListener('click', function(event) {
 // Close dropdowns on escape key
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
-        const dropdowns = document.querySelectorAll('[id$="Dropdown"]');
+        const dropdowns = document.querySelectorAll('[id$="Dropdown"], [id$="-menu"]');
         dropdowns.forEach(dropdown => {
             dropdown.classList.add('hidden');
         });

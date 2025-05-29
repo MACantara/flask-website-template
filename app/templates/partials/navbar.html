@@ -33,7 +33,7 @@
                     
                     <!-- User Dropdown -->
                     <div class="relative">
-                        <button class="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" onclick="toggleDropdown('userDropdown')">
+                        <button class="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-dropdown-toggle="userDropdown">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm mr-2">
                                 {{ session.username[0].upper() }}
                             </div>
@@ -71,7 +71,7 @@
 
                 <!-- Theme Dropdown -->
                 <div class="relative" id="theme-dropdown">
-                    <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 transform rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-1" aria-label="Select theme" title="Select theme" onclick="toggleDropdown('theme-menu')">
+                    <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 transform rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-1" aria-label="Select theme" title="Select theme" data-dropdown-toggle="theme-menu">
                         <i class="bi bi-sun-fill text-xl theme-light"></i>
                         <i class="bi bi-moon-fill text-xl theme-dark hidden"></i>
                         <i class="bi bi-circle-half text-xl theme-system hidden"></i>
@@ -98,7 +98,7 @@
             <div class="md:hidden flex items-center space-x-2">
                 <!-- Mobile Theme Dropdown -->
                 <div class="relative" id="theme-dropdown-mobile">
-                    <button id="theme-toggle-mobile" class="p-2 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform flex items-center space-x-1" aria-label="Select theme" title="Select theme" onclick="toggleDropdown('theme-menu-mobile')">
+                    <button id="theme-toggle-mobile" class="p-2 text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform flex items-center space-x-1" aria-label="Select theme" title="Select theme" data-dropdown-toggle="theme-menu-mobile">
                         <i class="bi bi-sun-fill text-lg theme-light"></i>
                         <i class="bi bi-moon-fill text-lg theme-dark hidden"></i>
                         <i class="bi bi-circle-half text-lg theme-system hidden"></i>
@@ -121,7 +121,7 @@
                         </div>
                     </div>
                 </div>
-                <button id="mobile-menu-button" class="text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform" onclick="toggleDropdown('mobile-menu')">
+                <button id="mobile-menu-button" class="text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 hover:scale-110 transform" data-dropdown-toggle="mobile-menu">
                     <i class="bi bi-list text-2xl"></i>
                 </button>
             </div>
