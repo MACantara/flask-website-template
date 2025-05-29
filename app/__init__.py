@@ -48,11 +48,15 @@ def create_app(config_name=None):
             except Exception as e:
                 app.logger.warning(f"Database initialization failed: {e}")
 
-        # Add current year to template context
+        # Add current year and date to template context
         @app.context_processor
-        def inject_current_year():
+        def inject_current_date():
             from datetime import datetime
-            return {'current_year': datetime.now().year}
+            current_date = datetime.now()
+            return {
+                'current_year': current_date.year,
+                'current_date': current_date
+            }
 
     # Make hCaptcha available in templates
     from app.utils.hcaptcha_utils import hcaptcha, is_hcaptcha_enabled
