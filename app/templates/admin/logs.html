@@ -3,15 +3,13 @@
 {% block title %}Logs - Admin Panel{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
         {% include 'partials/admin/logs/header.html' %}
 
         <!-- Logs Table Container -->
-        <div
-            class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-left">
-            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Recent Logs - {{ log_type.replace('_', '
-                ').title() }}</h2>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-left">
+            <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Recent Logs - {{ log_type.replace('_', ' ').title() }}</h2>
 
             {% include 'partials/admin/logs/filters.html' %}
 
