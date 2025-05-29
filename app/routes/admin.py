@@ -216,6 +216,72 @@ def logs():
                          pagination=logs_pagination,
                          log_type=log_type)
 
+@admin_bp.route('/logs/export')
+@admin_required
+def export_logs():
+    """Export logs to CSV format."""
+    import csv
+    import io
+    from flask import make_response
+    
+    log_type = request.args.get('type', 'login_attempts')
+    
+    # Create CSV output
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Define headers and data based on log type
+    if log_type == 'login_attempts':
+        writer.writerow(['Username/Email', 'IP Address', 'Success', 'Attempted At'])
+        logs = LoginAttempt.query.order_by(desc(LoginAttempt.attempted_at)).all()
+        for log in logs:
+            writer.writerow([
+                log.username_or_email or 'Unknown',
+                log.ip_address,
+                'Success' if log.success else 'Failed',
+                log.attempted_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+    elif log_type == 'user_registrations':
+        writer.writerow(['Username', 'Email', 'Active', 'Admin', 'Created At'])
+        logs = User.query.order_by(desc(User.created_at)).all()
+        for log in logs:
+            writer.writerow([
+                log.username,
+                log.email,
+                'Yes' if log.is_active else 'No',
+                'Yes' if log.is_admin else 'No',
+                log.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+    elif log_type == 'email_verifications':
+        writer.writerow(['Email', 'User', 'Verified', 'Expired', 'Created At'])
+        logs = EmailVerification.query.order_by(desc(EmailVerification.created_at)).all()
+        for log in logs:
+            writer.writerow([
+                log.email,
+                log.user.username if log.user else 'Unknown',
+                'Yes' if log.is_verified else 'No',
+                'Yes' if log.is_expired() else 'No',
+                log.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+    elif log_type == 'contact_submissions':
+        writer.writerow(['Name', 'Email', 'Subject', 'Message', 'Created At'])
+        logs = Contact.query.order_by(desc(Contact.created_at)).all()
+        for log in logs:
+            writer.writerow([
+                log.name,
+                log.email,
+                log.subject,
+                log.message,
+                log.created_at.strftime('%Y-%m-%d %H:%M:%S')
+            ])
+    
+    # Create response
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = 'text/csv'
+    response.headers['Content-Disposition'] = f'attachment; filename={log_type}_export.csv'
+    
+    return response
+
 @admin_bp.route('/api/stats')
 @admin_required
 def api_stats():
