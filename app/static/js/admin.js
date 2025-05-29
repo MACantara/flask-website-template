@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeConfirmationDialogs();
     initializeTabSwitching();
     initializeLogTypeChange();
+    initializePagination();
 });
 
 /**
@@ -133,6 +134,74 @@ function changeLogType() {
         currentUrl.searchParams.delete('page'); // Reset to first page when changing type
         window.location.href = currentUrl.toString();
     }
+}
+
+/**
+ * Initialize pagination functionality
+ */
+function initializePagination() {
+    // Handle items per page change
+    const perPageSelect = document.getElementById('perPage');
+    if (perPageSelect) {
+        perPageSelect.addEventListener('change', function() {
+            changeItemsPerPage(this.value);
+        });
+    }
+    
+    // Handle page jump functionality
+    const jumpToPageInput = document.getElementById('jumpToPage');
+    const jumpButton = document.getElementById('jumpButton');
+    
+    if (jumpToPageInput && jumpButton) {
+        jumpButton.addEventListener('click', function() {
+            jumpToPage();
+        });
+        
+        jumpToPageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                jumpToPage();
+            }
+        });
+    }
+}
+
+/**
+ * Change items per page
+ * @param {string} perPage - Number of items per page
+ */
+function changeItemsPerPage(perPage) {
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('per_page', perPage);
+    currentUrl.searchParams.delete('page'); // Reset to first page when changing items per page
+    window.location.href = currentUrl.toString();
+}
+
+/**
+ * Jump to specific page
+ */
+function jumpToPage() {
+    const jumpToPageInput = document.getElementById('jumpToPage');
+    if (!jumpToPageInput) return;
+    
+    const pageNumber = parseInt(jumpToPageInput.value);
+    if (isNaN(pageNumber) || pageNumber < 1) {
+        showAdminAlert('Please enter a valid page number.', 'error');
+        return;
+    }
+    
+    // Get max pages from the pagination info
+    const paginationInfo = document.querySelector('.text-sm.text-gray-500');
+    if (paginationInfo) {
+        const maxPages = parseInt(jumpToPageInput.getAttribute('max'));
+        if (pageNumber > maxPages) {
+            showAdminAlert(`Page number cannot exceed ${maxPages}.`, 'error');
+            return;
+        }
+    }
+    
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set('page', pageNumber);
+    window.location.href = currentUrl.toString();
 }
 
 /**

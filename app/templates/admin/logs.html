@@ -176,37 +176,111 @@
 
             <!-- Pagination -->
             {% if pagination.pages > 1 %}
-            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-3 border-t border-gray-200 dark:border-gray-600">
-                <div class="flex items-center justify-between">
+            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600 rounded-b-lg">
+                <div class="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
+                    <!-- Results info -->
                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                        Showing {{ pagination.per_page * (pagination.page - 1) + 1 }} to 
-                        {{ pagination.per_page * pagination.page if pagination.page < pagination.pages else pagination.total }} 
-                        of {{ pagination.total }} entries
+                        Showing 
+                        <span class="font-medium text-gray-900 dark:text-white">{{ pagination.per_page * (pagination.page - 1) + 1 }}</span>
+                        to 
+                        <span class="font-medium text-gray-900 dark:text-white">{{ pagination.per_page * pagination.page if pagination.page < pagination.pages else pagination.total }}</span>
+                        of 
+                        <span class="font-medium text-gray-900 dark:text-white">{{ pagination.total }}</span>
+                        entries
                     </div>
-                    <div class="flex space-x-2">
+                    
+                    <!-- Pagination controls -->
+                    <div class="flex items-center space-x-1">
+                        <!-- Previous button -->
                         {% if pagination.has_prev %}
                             <a href="{{ url_for('logs.logs', type=log_type, page=pagination.prev_num) }}" 
-                               class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Previous</a>
+                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-l-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
+                                <i class="bi bi-chevron-left mr-1"></i>
+                                Previous
+                            </a>
+                        {% else %}
+                            <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-l-lg cursor-not-allowed">
+                                <i class="bi bi-chevron-left mr-1"></i>
+                                Previous
+                            </span>
                         {% endif %}
                         
-                        {% for page_num in pagination.iter_pages() %}
-                            {% if page_num %}
-                                {% if page_num != pagination.page %}
-                                    <a href="{{ url_for('logs.logs', type=log_type, page=page_num) }}" 
-                                       class="px-3 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-500">{{ page_num }}</a>
+                        <!-- Page numbers -->
+                        <div class="hidden sm:flex">
+                            {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                                {% if page_num %}
+                                    {% if page_num != pagination.page %}
+                                        <a href="{{ url_for('logs.logs', type=log_type, page=page_num) }}" 
+                                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border-t border-b border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
+                                            {{ page_num }}
+                                        </a>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 border-t border-b border-blue-300 dark:border-blue-600 z-10">
+                                            {{ page_num }}
+                                        </span>
+                                    {% endif %}
                                 {% else %}
-                                    <span class="px-3 py-1 bg-blue-600 text-white rounded">{{ page_num }}</span>
+                                    <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border-t border-b border-gray-300 dark:border-gray-600">
+                                        ...
+                                    </span>
                                 {% endif %}
-                            {% else %}
-                                <span class="px-3 py-1">...</span>
-                            {% endif %}
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                         
+                        <!-- Mobile page info -->
+                        <div class="sm:hidden">
+                            <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border-t border-b border-gray-300 dark:border-gray-600">
+                                {{ pagination.page }} of {{ pagination.pages }}
+                            </span>
+                        </div>
+                        
+                        <!-- Next button -->
                         {% if pagination.has_next %}
                             <a href="{{ url_for('logs.logs', type=log_type, page=pagination.next_num) }}" 
-                               class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Next</a>
+                               class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-r-lg hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-700 dark:hover:text-gray-300 transition-colors duration-200">
+                                Next
+                                <i class="bi bi-chevron-right ml-1"></i>
+                            </a>
+                        {% else %}
+                            <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-300 dark:text-gray-600 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-r-lg cursor-not-allowed">
+                                Next
+                                <i class="bi bi-chevron-right ml-1"></i>
+                            </span>
                         {% endif %}
                     </div>
+                    
+                    <!-- Items per page selector -->
+                    <div class="flex items-center space-x-2">
+                        <label for="perPage" class="text-sm text-gray-500 dark:text-gray-400">Show:</label>
+                        <select id="perPage" class="text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400">
+                            <option value="25" {% if request.args.get('per_page', '50') == '25' %}selected{% endif %}>25</option>
+                            <option value="50" {% if request.args.get('per_page', '50') == '50' %}selected{% endif %}>50</option>
+                            <option value="100" {% if request.args.get('per_page', '50') == '100' %}selected{% endif %}>100</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Quick page jump (for large datasets) -->
+                {% if pagination.pages > 10 %}
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <div class="flex items-center justify-center space-x-2">
+                        <label for="jumpToPage" class="text-sm text-gray-500 dark:text-gray-400">Jump to page:</label>
+                        <input type="number" id="jumpToPage" min="1" max="{{ pagination.pages }}" 
+                               placeholder="{{ pagination.page }}" 
+                               class="w-20 text-sm border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 text-center">
+                        <button id="jumpButton" 
+                                class="px-3 py-1 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors duration-200">
+                            Go
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <!-- No pagination needed -->
+            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-3 border-t border-gray-200 dark:border-gray-600 rounded-b-lg">
+                <div class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                    Showing all {{ pagination.total }} entries
                 </div>
             </div>
             {% endif %}

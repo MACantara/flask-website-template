@@ -20,7 +20,11 @@ def logs():
     """View system logs."""
     log_type = request.args.get('type', 'login_attempts')
     page = request.args.get('page', 1, type=int)
-    per_page = 50
+    per_page = request.args.get('per_page', 25, type=int)
+    
+    # Validate per_page to prevent abuse
+    if per_page not in [25, 50, 100]:
+        per_page = 25
     
     if log_type == 'login_attempts':
         logs_query = LoginAttempt.query.order_by(desc(LoginAttempt.attempted_at))
