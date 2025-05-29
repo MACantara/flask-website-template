@@ -242,3 +242,60 @@ function validateEmail(email) {
         themeMenuMobile?.addEventListener('click', (e) => e.stopPropagation());
     });
 })();
+
+// Dropdown functionality
+function toggleDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+    
+    // Close all other dropdowns first
+    const allDropdowns = document.querySelectorAll('[id$="Dropdown"]');
+    allDropdowns.forEach(d => {
+        if (d.id !== dropdownId) {
+            d.classList.add('hidden');
+        }
+    });
+    
+    // Toggle the clicked dropdown
+    dropdown.classList.toggle('hidden');
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdowns = document.querySelectorAll('[id$="Dropdown"]');
+    const dropdownButtons = document.querySelectorAll('[onclick*="toggleDropdown"]');
+    
+    let clickedOnDropdown = false;
+    let clickedOnButton = false;
+    
+    // Check if clicked on dropdown or its children
+    dropdowns.forEach(dropdown => {
+        if (dropdown.contains(event.target)) {
+            clickedOnDropdown = true;
+        }
+    });
+    
+    // Check if clicked on dropdown button
+    dropdownButtons.forEach(button => {
+        if (button.contains(event.target)) {
+            clickedOnButton = true;
+        }
+    });
+    
+    // Close all dropdowns if clicked outside
+    if (!clickedOnDropdown && !clickedOnButton) {
+        dropdowns.forEach(dropdown => {
+            dropdown.classList.add('hidden');
+        });
+    }
+});
+
+// Close dropdowns on escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const dropdowns = document.querySelectorAll('[id$="Dropdown"]');
+        dropdowns.forEach(dropdown => {
+            dropdown.classList.add('hidden');
+        });
+    }
+});
