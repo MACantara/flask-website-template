@@ -56,113 +56,6 @@ function initializeLogPagination() {
             this.parentElement.classList.remove('ring-2', 'ring-blue-500', 'dark:ring-blue-400');
         });
     }
-    
-    // Handle page jump functionality
-    const jumpToPageInput = document.getElementById('jumpToPage');
-    const jumpButton = document.getElementById('jumpButton');
-    
-    if (jumpToPageInput && jumpButton) {
-        jumpButton.addEventListener('click', function() {
-            jumpToPage();
-        });
-        
-        jumpToPageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                jumpToPage();
-            }
-        });
-        
-        // Add input validation
-        jumpToPageInput.addEventListener('input', function() {
-            const value = parseInt(this.value);
-            const max = parseInt(this.getAttribute('max'));
-            const min = parseInt(this.getAttribute('min'));
-            
-            if (value > max) {
-                this.value = max;
-            } else if (value < min) {
-                this.value = min;
-            }
-        });
-    }
-
-    // Handle pagination dropdown
-    initializePaginationDropdown();
-}
-
-/**
- * Initialize pagination dropdown functionality
- */
-function initializePaginationDropdown() {
-    // Handle pagination dropdown buttons
-    const paginationDropdowns = document.querySelectorAll('[id^="page-dropdown-"]');
-    paginationDropdowns.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const dropdownId = this.getAttribute('data-dropdown-toggle');
-            togglePaginationDropdown(dropdownId);
-        });
-    });
-
-    // Close pagination dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        const paginationMenus = document.querySelectorAll('[id^="page-menu-"]');
-        const paginationButtons = document.querySelectorAll('[id^="page-dropdown-"]');
-        
-        let clickedOnMenu = false;
-        let clickedOnButton = false;
-        
-        // Check if clicked on pagination menu or its children
-        paginationMenus.forEach(menu => {
-            if (menu.contains(event.target)) {
-                clickedOnMenu = true;
-            }
-        });
-        
-        // Check if clicked on pagination button
-        paginationButtons.forEach(button => {
-            if (button.contains(event.target)) {
-                clickedOnButton = true;
-            }
-        });
-        
-        // Close all pagination dropdowns if clicked outside
-        if (!clickedOnMenu && !clickedOnButton) {
-            paginationMenus.forEach(menu => {
-                menu.classList.add('hidden');
-            });
-        }
-    });
-
-    // Close pagination dropdowns on escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const paginationMenus = document.querySelectorAll('[id^="page-menu-"]');
-            paginationMenus.forEach(menu => {
-                menu.classList.add('hidden');
-            });
-        }
-    });
-}
-
-/**
- * Toggle pagination dropdown
- * @param {string} dropdownId - The ID of the dropdown to toggle
- */
-function togglePaginationDropdown(dropdownId) {
-    const dropdown = document.getElementById(dropdownId);
-    if (!dropdown) return;
-    
-    // Close all other pagination dropdowns first
-    const allPaginationMenus = document.querySelectorAll('[id^="page-menu-"]');
-    allPaginationMenus.forEach(menu => {
-        if (menu.id !== dropdownId) {
-            menu.classList.add('hidden');
-        }
-    });
-    
-    // Toggle the clicked dropdown
-    dropdown.classList.toggle('hidden');
 }
 
 /**
@@ -176,36 +69,6 @@ function changeItemsPerPage(perPage) {
     
     // Show loading state
     showLoadingState('Updating page size...');
-    
-    window.location.href = currentUrl.toString();
-}
-
-// Jump to specific page in logs
-function jumpToPage() {
-    const jumpToPageInput = document.getElementById('jumpToPage');
-    if (!jumpToPageInput) return;
-    
-    const pageNumber = parseInt(jumpToPageInput.value);
-    if (isNaN(pageNumber) || pageNumber < 1) {
-        showLogAlert('Please enter a valid page number.', 'error');
-        jumpToPageInput.focus();
-        return;
-    }
-    
-    // Get max pages from the pagination info
-    const maxPages = parseInt(jumpToPageInput.getAttribute('max'));
-    if (pageNumber > maxPages) {
-        showLogAlert(`Page number cannot exceed ${maxPages}.`, 'error');
-        jumpToPageInput.value = maxPages;
-        jumpToPageInput.focus();
-        return;
-    }
-    
-    const currentUrl = new URL(window.location);
-    currentUrl.searchParams.set('page', pageNumber);
-    
-    // Show loading state
-    showLoadingState(`Jumping to page ${pageNumber}...`);
     
     window.location.href = currentUrl.toString();
 }
@@ -341,16 +204,6 @@ function initializeLogKeyboardShortcuts() {
                 showLogAlert('Per page selector focused. Use arrow keys to navigate.', 'info');
             }
         }
-        
-        // Ctrl/Cmd + J to focus on page jump
-        if ((e.ctrlKey || e.metaKey) && e.key === 'j') {
-            e.preventDefault();
-            const jumpToPageInput = document.getElementById('jumpToPage');
-            if (jumpToPageInput) {
-                jumpToPageInput.focus();
-                showLogAlert('Page jump focused. Enter page number and press Enter.', 'info');
-            }
-        }
     });
 }
 
@@ -373,9 +226,7 @@ if (window.location.pathname.includes('/logs')) {
 window.logsJS = {
     changeLogType,
     changeItemsPerPage,
-    jumpToPage,
     showLogAlert,
     showLoadingState,
-    hideLoadingState,
-    togglePaginationDropdown
+    hideLoadingState
 };
