@@ -67,7 +67,11 @@ def create_app(config_name=None):
                         user_id=admin_user.id,
                         email=admin_user.email
                     )
-                    # Mark as verified immediately
+                    # Add to session first
+                    db.session.add(admin_verification)
+                    db.session.commit()
+                    
+                    # Now mark as verified
                     admin_verification.verify()
                     
                     app.logger.info("Default admin user created: admin/admin123 (email verified)")
@@ -78,6 +82,11 @@ def create_app(config_name=None):
                             user_id=admin_user.id,
                             email=admin_user.email
                         )
+                        # Add to session first
+                        db.session.add(admin_verification)
+                        db.session.commit()
+                        
+                        # Now mark as verified
                         admin_verification.verify()
                         app.logger.info("Admin email verification created and verified")
                     
