@@ -140,13 +140,13 @@ function changeLogType() {
  * Initialize pagination functionality
  */
 function initializePagination() {
-    // Handle items per page change
-    const perPageSelect = document.getElementById('perPage');
-    if (perPageSelect) {
-        perPageSelect.addEventListener('change', function() {
+    // Handle items per page change for both top and bottom selectors
+    const perPageSelects = document.querySelectorAll('#perPage, #perPageTop');
+    perPageSelects.forEach(select => {
+        select.addEventListener('change', function() {
             changeItemsPerPage(this.value);
         });
-    }
+    });
     
     // Handle page jump functionality
     const jumpToPageInput = document.getElementById('jumpToPage');

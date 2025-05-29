@@ -87,7 +87,11 @@ def dashboard():
 def users():
     """User management page."""
     page = request.args.get('page', 1, type=int)
-    per_page = 20
+    per_page = request.args.get('per_page', 25, type=int)
+    
+    # Validate per_page to prevent abuse
+    if per_page not in [25, 50, 100]:
+        per_page = 25
     
     # Search functionality
     search = request.args.get('search', '')
