@@ -45,6 +45,22 @@ def create_app(config_name=None):
         if not app.config.get('DISABLE_DATABASE', False):
             try:
                 db.create_all()
+                
+                # Create default admin user if it doesn't exist
+                from app.models.user import User
+                admin_user = User.query.filter_by(username='admin').first()
+                if not admin_user:
+                    admin_user = User(
+                        username='admin',
+                        email='admin@example.com',
+                        is_admin=True,
+                        is_active=True
+                    )
+                    admin_user.set_password('admin123')  # Change this in production!
+                    db.session.add(admin_user)
+                    db.session.commit()
+                    app.logger.info("Default admin user created: admin/admin123")
+                    
             except Exception as e:
                 app.logger.warning(f"Database initialization failed: {e}")
 
