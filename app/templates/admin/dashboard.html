@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Flask Website{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8 opacity-0 animate-fade-in-up">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+                    <p class="text-gray-600 dark:text-gray-400 mt-2">Manage users and monitor system activity</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{{ url_for('admin.users') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                        <i class="bi bi-people mr-2"></i>Manage Users
+                    </a>
+                    <a href="{{ url_for('admin.logs') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                        <i class="bi bi-file-text mr-2"></i>View Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 opacity-0 animate-fade-in-up" style="animation-delay: 0.1s;">
+            <!-- Total Users -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30">
+                        <i class="bi bi-people text-blue-600 dark:text-blue-400 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.total_users }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-green-600 dark:text-green-400">{{ stats.active_users }} active</span>
+                    <span class="text-gray-500 dark:text-gray-400 mx-2">•</span>
+                    <span class="text-red-600 dark:text-red-400">{{ stats.inactive_users }} inactive</span>
+                </div>
+            </div>
+
+            <!-- Recent Registrations -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 dark:bg-green-900/30">
+                        <i class="bi bi-person-plus text-green-600 dark:text-green-400 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">New Users (30d)</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.recent_registrations }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Attempts -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900/30">
+                        <i class="bi bi-shield-check text-yellow-600 dark:text-yellow-400 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Login Attempts (24h)</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.recent_login_attempts }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-red-600 dark:text-red-400">{{ stats.failed_login_attempts }} failed</span>
+                </div>
+            </div>
+
+            <!-- Email Verifications -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900/30">
+                        <i class="bi bi-envelope-check text-purple-600 dark:text-purple-400 text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Email Verifications</p>
+                        <p class="text-3xl font-bold text-gray-900 dark:text-white">{{ stats.verified_emails }}</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-sm">
+                    <span class="text-orange-600 dark:text-orange-400">{{ stats.pending_verifications }} pending</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Recent Users -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-left" style="animation-delay: 0.2s;">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Users</h2>
+                    <a href="{{ url_for('admin.users') }}" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">View all</a>
+                </div>
+                <div class="space-y-4">
+                    {% for user in recent_users %}
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                                {{ user.username[0].upper() }}
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-medium text-gray-900 dark:text-white">{{ user.username }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.created_at.strftime('%m/%d/%Y') }}</p>
+                            <div class="flex items-center mt-1">
+                                {% if user.is_active %}
+                                    <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Active</span>
+                                {% else %}
+                                    <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Inactive</span>
+                                {% endif %}
+                                {% if user.is_admin %}
+                                    <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 ml-1">Admin</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Login Activity -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-right" style="animation-delay: 0.3s;">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-gray-900 dark:text-white">Recent Login Activity</h2>
+                    <a href="{{ url_for('admin.logs') }}" class="text-blue-600 dark:text-blue-400 hover:underline text-sm">View all logs</a>
+                </div>
+                <div class="space-y-3">
+                    {% for attempt in recent_login_logs %}
+                    <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center {{ 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' if attempt.success else 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' }}">
+                                <i class="bi {{ 'bi-check-circle' if attempt.success else 'bi-x-circle' }} text-sm"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="font-medium text-gray-900 dark:text-white">{{ attempt.username_or_email or 'Unknown' }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ attempt.ip_address }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm text-gray-500 dark:text-gray-400">{{ attempt.attempted_at.strftime('%m/%d %H:%M') }}</p>
+                            <span class="px-2 py-1 text-xs rounded-full {{ 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' if attempt.success else 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                {{ 'Success' if attempt.success else 'Failed' }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <form method="POST" action="{{ url_for('admin.cleanup_logs') }}" class="inline">
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center" onclick="return confirm('Are you sure you want to clean up old logs? This action cannot be undone.')">
+                        <i class="bi bi-trash mr-2"></i>
+                        Cleanup Old Logs
+                    </button>
+                </form>
+                <a href="{{ url_for('admin.users', status='inactive') }}" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    <i class="bi bi-person-x mr-2"></i>
+                    View Inactive Users
+                </a>
+                <a href="{{ url_for('admin.logs', type='email_verifications') }}" class="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    <i class="bi bi-envelope-exclamation mr-2"></i>
+                    Pending Verifications
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
