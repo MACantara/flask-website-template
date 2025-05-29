@@ -2,8 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize admin functionality
     initializeConfirmationDialogs();
     initializeTabSwitching();
-    initializeLogTypeChange();
-    initializePagination();
+    initializeAdminPagination();
 });
 
 /**
@@ -101,106 +100,26 @@ function switchTab(tabName) {
 }
 
 /**
- * Initialize log type change functionality
+ * Initialize pagination functionality for admin pages (non-logs)
  */
-function initializeLogTypeChange() {
-    const logTypeSelect = document.getElementById('logType');
-    if (logTypeSelect) {
-        logTypeSelect.addEventListener('change', function() {
-            changeLogType();
+function initializeAdminPagination() {
+    // Handle items per page change for admin user pages
+    const perPageSelects = document.querySelectorAll('#perPage:not([id="perPageFilter"])');
+    perPageSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            changeAdminItemsPerPage(this.value);
         });
-        
-        // Add focus and blur effects for better UX
-        logTypeSelect.addEventListener('focus', function() {
-            this.parentElement.classList.add('ring-2', 'ring-blue-500', 'dark:ring-blue-400');
-        });
-        
-        logTypeSelect.addEventListener('blur', function() {
-            this.parentElement.classList.remove('ring-2', 'ring-blue-500', 'dark:ring-blue-400');
-        });
-    }
+    });
 }
 
 /**
- * Handle log type filter change
- */
-function changeLogType() {
-    const select = document.getElementById('logType');
-    if (select) {
-        const selectedType = select.value;
-        // Get the current URL and update the type parameter
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('type', selectedType);
-        currentUrl.searchParams.delete('page'); // Reset to first page when changing type
-        window.location.href = currentUrl.toString();
-    }
-}
-
-/**
- * Initialize pagination functionality
- */
-function initializePagination() {
-    // Handle items per page change for filter selector
-    const perPageFilter = document.getElementById('perPageFilter');
-    if (perPageFilter) {
-        perPageFilter.addEventListener('change', function() {
-            changeItemsPerPage(this.value);
-        });
-    }
-    
-    // Handle page jump functionality
-    const jumpToPageInput = document.getElementById('jumpToPage');
-    const jumpButton = document.getElementById('jumpButton');
-    
-    if (jumpToPageInput && jumpButton) {
-        jumpButton.addEventListener('click', function() {
-            jumpToPage();
-        });
-        
-        jumpToPageInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                jumpToPage();
-            }
-        });
-    }
-}
-
-/**
- * Change items per page
+ * Change items per page for admin pages
  * @param {string} perPage - Number of items per page
  */
-function changeItemsPerPage(perPage) {
+function changeAdminItemsPerPage(perPage) {
     const currentUrl = new URL(window.location);
     currentUrl.searchParams.set('per_page', perPage);
     currentUrl.searchParams.delete('page'); // Reset to first page when changing items per page
-    window.location.href = currentUrl.toString();
-}
-
-/**
- * Jump to specific page
- */
-function jumpToPage() {
-    const jumpToPageInput = document.getElementById('jumpToPage');
-    if (!jumpToPageInput) return;
-    
-    const pageNumber = parseInt(jumpToPageInput.value);
-    if (isNaN(pageNumber) || pageNumber < 1) {
-        showAdminAlert('Please enter a valid page number.', 'error');
-        return;
-    }
-    
-    // Get max pages from the pagination info
-    const paginationInfo = document.querySelector('.text-sm.text-gray-500');
-    if (paginationInfo) {
-        const maxPages = parseInt(jumpToPageInput.getAttribute('max'));
-        if (pageNumber > maxPages) {
-            showAdminAlert(`Page number cannot exceed ${maxPages}.`, 'error');
-            return;
-        }
-    }
-    
-    const currentUrl = new URL(window.location);
-    currentUrl.searchParams.set('page', pageNumber);
     window.location.href = currentUrl.toString();
 }
 
@@ -211,22 +130,33 @@ function jumpToPage() {
  */
 function showAdminAlert(message, type = 'info') {
     const alertDiv = document.createElement('div');
-    alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md alert-${type}`;
+    alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md admin-alert-${type}`;
     
     // Set colors based on type
     const colorClasses = {
-        success: 'bg-green-100 border border-green-400 text-green-700',
-        error: 'bg-red-100 border border-red-400 text-red-700',
-        warning: 'bg-yellow-100 border border-yellow-400 text-yellow-700',
-        info: 'bg-blue-100 border border-blue-400 text-blue-700'
+        success: 'bg-green-100 border border-green-400 text-green-700 dark:bg-green-900/90 dark:border-green-600 dark:text-green-300',
+        error: 'bg-red-100 border border-red-400 text-red-700 dark:bg-red-900/90 dark:border-red-600 dark:text-red-300',
+        warning: 'bg-yellow-100 border border-yellow-400 text-yellow-700 dark:bg-yellow-900/90 dark:border-yellow-600 dark:text-yellow-300',
+        info: 'bg-blue-100 border border-blue-400 text-blue-700 dark:bg-blue-900/90 dark:border-blue-600 dark:text-blue-300'
     };
     
     alertDiv.className += ` ${colorClasses[type] || colorClasses.info}`;
     
+    // Add icon based on type
+    const icons = {
+        success: 'bi-check-circle-fill',
+        error: 'bi-exclamation-triangle-fill',
+        warning: 'bi-exclamation-triangle-fill',
+        info: 'bi-info-circle-fill'
+    };
+    
     alertDiv.innerHTML = `
         <div class="flex items-center justify-between">
-            <span>${message}</span>
-            <button type="button" class="ml-4 text-lg font-bold hover:opacity-70" onclick="this.parentElement.parentElement.remove()">
+            <div class="flex items-center">
+                <i class="bi ${icons[type] || icons.info} mr-2"></i>
+                <span>${message}</span>
+            </div>
+            <button type="button" class="ml-4 text-lg font-bold hover:opacity-70 transition-opacity duration-200" onclick="this.parentElement.parentElement.remove()">
                 ×
             </button>
         </div>
@@ -234,10 +164,19 @@ function showAdminAlert(message, type = 'info') {
     
     document.body.appendChild(alertDiv);
     
+    // Add entrance animation
+    setTimeout(() => {
+        alertDiv.classList.add('animate-fade-in-right');
+    }, 10);
+    
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (alertDiv.parentNode) {
-            alertDiv.remove();
+            alertDiv.style.opacity = '0';
+            alertDiv.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 300);
         }
     }, 5000);
 }
@@ -282,7 +221,6 @@ async function adminAjaxRequest(url, method = 'GET', data = null) {
  */
 window.adminJS = {
     switchTab,
-    changeLogType,
     showAdminAlert,
     adminAjaxRequest
 };
