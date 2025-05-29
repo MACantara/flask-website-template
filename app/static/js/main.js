@@ -1,4 +1,4 @@
-import dropdownManager from './dropdown-toggle.js';
+import dropdownManager from './utils/dropdown-toggle.js';
 
 // Mobile menu toggle
 document.addEventListener("DOMContentLoaded", function () {

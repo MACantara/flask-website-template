@@ -3,7 +3,7 @@
  * Handles pagination dropdown functionality and page navigation
  */
 
-import dropdownManager from './dropdown-toggle.js';
+import dropdownManager from './utils/dropdown-toggle.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize dropdown manager
