@@ -108,6 +108,15 @@ function initializeLogTypeChange() {
         logTypeSelect.addEventListener('change', function() {
             changeLogType();
         });
+        
+        // Add focus and blur effects for better UX
+        logTypeSelect.addEventListener('focus', function() {
+            this.parentElement.classList.add('ring-2', 'ring-blue-500', 'dark:ring-blue-400');
+        });
+        
+        logTypeSelect.addEventListener('blur', function() {
+            this.parentElement.classList.remove('ring-2', 'ring-blue-500', 'dark:ring-blue-400');
+        });
     }
 }
 
