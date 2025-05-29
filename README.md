@@ -13,6 +13,36 @@ A modern Flask-based website template featuring Home, About, and Contact pages w
 - Advanced Security Features (Account Lockout, IP-based Rate Limiting)
 - Three-way theme system (Light/Dark/System)
 - Accessible and user-friendly interface
+- Legal Compliance Pages with 14-day change notice period
+
+## Legal Compliance
+
+This template includes comprehensive legal policy pages that comply with Philippine laws and international standards:
+
+### 📋 Policy Pages
+- **Privacy Policy**: Compliant with RA 10173 (Data Privacy Act of 2012)
+- **Terms of Service**: Comprehensive user agreement with Philippine law governance
+- **Cookie Policy**: Detailed explanation of cookie usage and user controls
+
+### ⏰ Policy Change Management
+- **14-Day Notice Period**: All policy changes take effect 14 days after posting
+- **Automatic Date Management**: Policy effective dates are automatically calculated
+- **Version Control**: Clear versioning with "Last Updated" and "Effective Date" tracking
+- **User Notification**: Built-in system to notify users of policy changes
+
+### 🗓️ Policy Date Configuration
+The application automatically manages policy dates:
+- **Date Updated**: When the policy was last modified
+- **Date Effective**: Automatically set to 14 days after the update date
+- **Configurable Dates**: Easy to modify in the route handlers (`app/routes/main.py`)
+
+```python
+# Example: Setting policy dates
+date_updated = datetime(2025, 5, 29)  # When policy was updated
+date_effective = date_updated + timedelta(days=14)  # 14 days later
+```
+
+This approach ensures legal compliance by giving users adequate notice of any policy changes, allowing them time to review and decide whether to continue using the service.
 
 ## Authentication System
 
