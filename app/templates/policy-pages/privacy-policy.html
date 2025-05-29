@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy - Flask Website{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden mb-8 opacity-0 animate-fade-in-up">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-12">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
+                        <i class="bi bi-shield-lock"></i>
+                    </div>
+                    <h1 class="text-4xl font-bold text-white mb-4">Privacy Policy</h1>
+                    <p class="text-blue-100 text-lg">Your privacy and data protection rights under RA 10173</p>
+                </div>
+            </div>
+            
+            <div class="px-8 py-6 bg-blue-50 dark:bg-blue-900/20 border-b border-blue-200 dark:border-blue-800">
+                <div class="flex items-center justify-between text-sm text-blue-800 dark:text-blue-200">
+                    <span><strong>Last Updated:</strong> {{ current_date.strftime('%B %d, %Y') }}</span>
+                    <span><strong>Effective Date:</strong> {{ current_date.strftime('%B %d, %Y') }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="bg-white dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+            <div class="px-8 py-8 prose prose-lg max-w-none dark:prose-invert">
+                
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">1. Introduction</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-6">
+                    Flask Website Template ("we," "our," or "us") is committed to protecting your privacy and personal data in accordance with the Republic Act No. 10173, also known as the Data Privacy Act of 2012 of the Philippines, and other applicable data protection laws. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">2. Data Controller Information</h2>
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl mb-6">
+                    <p class="text-gray-700 dark:text-gray-300 mb-2"><strong>Company Name:</strong> Flask Website Template</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2"><strong>Address:</strong> [Your Company Address]</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-2"><strong>Email:</strong> privacy@example.com</p>
+                    <p class="text-gray-700 dark:text-gray-300"><strong>Data Protection Officer:</strong> [DPO Name and Contact]</p>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">3. Personal Information We Collect</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">We collect the following types of personal information:</p>
+                
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">3.1 Information You Provide Directly</h3>
+                <ul class="list-disc pl-6 mb-6 text-gray-700 dark:text-gray-300">
+                    <li><strong>Account Information:</strong> Username, email address, password (encrypted)</li>
+                    <li><strong>Contact Information:</strong> Name, email address, subject, and message content</li>
+                    <li><strong>Profile Information:</strong> Any additional information you choose to provide</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-3">3.2 Information Collected Automatically</h3>
+                <ul class="list-disc pl-6 mb-6 text-gray-700 dark:text-gray-300">
+                    <li><strong>Technical Information:</strong> IP address, browser type, operating system</li>
+                    <li><strong>Usage Information:</strong> Pages visited, time spent on site, click patterns</li>
+                    <li><strong>Security Information:</strong> Login attempt logs, session data</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">4. Legal Basis for Processing</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Under RA 10173, we process your personal information based on the following legal grounds:</p>
+                <ul class="list-disc pl-6 mb-6 text-gray-700 dark:text-gray-300">
+                    <li><strong>Consent:</strong> For account creation and marketing communications</li>
+                    <li><strong>Contract Performance:</strong> To provide our services and fulfill our obligations</li>
+                    <li><strong>Legitimate Interest:</strong> For security monitoring and service improvement</li>
+                    <li><strong>Legal Obligation:</strong> To comply with applicable laws and regulations</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">5. How We Use Your Information</h2>
+                <ul class="list-disc pl-6 mb-6 text-gray-700 dark:text-gray-300">
+                    <li>To create and maintain your user account</li>
+                    <li>To provide customer support and respond to inquiries</li>
+                    <li>To send password reset and account verification emails</li>
+                    <li>To monitor for security threats and prevent fraud</li>
+                    <li>To improve our website and services</li>
+                    <li>To comply with legal obligations</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">6. Information Sharing and Disclosure</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">We do not sell, trade, or rent your personal information. We may share your information only in the following circumstances:</p>
+                <ul class="list-disc pl-6 mb-6 text-gray-700 dark:text-gray-300">
+                    <li><strong>Service Providers:</strong> Third-party services that help us operate our website</li>
+                    <li><strong>Legal Requirements:</strong> When required by law or court order</li>
+                    <li><strong>Safety and Security:</strong> To protect rights, property, or safety</li>
+                    <li><strong>Business Transfers:</strong> In connection with mergers or acquisitions</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">7. Your Rights Under RA 10173</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">As a data subject, you have the following rights:</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-xl">
+                        <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2">Right to be Informed</h4>
+                        <p class="text-blue-800 dark:text-blue-200 text-sm">Know how your data is processed</p>
+                    </div>
+                    <div class="bg-green-50 dark:bg-green-900/20 p-6 rounded-xl">
+                        <h4 class="font-semibold text-green-900 dark:text-green-100 mb-2">Right of Access</h4>
+                        <p class="text-green-800 dark:text-green-200 text-sm">Request copies of your personal data</p>
+                    </div>
+                    <div class="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-xl">
+                        <h4 class="font-semibold text-orange-900 dark:text-orange-100 mb-2">Right to Rectification</h4>
+                        <p class="text-orange-800 dark:text-orange-200 text-sm">Correct inaccurate information</p>
+                    </div>
+                    <div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl">
+                        <h4 class="font-semibold text-red-900 dark:text-red-100 mb-2">Right to Erasure</h4>
+                        <p class="text-red-800 dark:text-red-200 text-sm">Request deletion of your data</p>
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">8. Data Security</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">We implement appropriate technical and organizational measures to protect your personal information:</p>
+                <ul class="list-disc pl-6 mb-6 text-gray-700 dark:text-gray-300">
+                    <li>Encryption of sensitive data (passwords, sessions)</li>
+                    <li>Secure transmission protocols (HTTPS)</li>
+                    <li>Access controls and authentication measures</li>
+                    <li>Regular security monitoring and audits</li>
+                    <li>Employee training on data protection</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">9. Data Retention</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-6">
+                    We retain your personal information for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law. Account data is retained until you request deletion, while login attempt logs are automatically deleted after 30 days.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">10. International Data Transfers</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-6">
+                    If we transfer your personal information outside the Philippines, we ensure adequate protection through appropriate safeguards such as standard contractual clauses or adequacy decisions by the National Privacy Commission.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">11. Changes to This Policy</h2>
+                <p class="text-gray-700 dark:text-gray-300 mb-6">
+                    We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new policy on this page and updating the "Last Updated" date.
+                </p>
+
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">12. Contact Us</h2>
+                <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-xl">
+                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                        If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us:
+                    </p>
+                    <div class="space-y-2 text-gray-700 dark:text-gray-300">
+                        <p><strong>Email:</strong> privacy@example.com</p>
+                        <p><strong>Address:</strong> [Your Company Address]</p>
+                        <p><strong>Phone:</strong> [Your Contact Number]</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                    <p class="text-blue-800 dark:text-blue-200 text-sm">
+                        <strong>Note:</strong> This privacy policy is compliant with Republic Act No. 10173 (Data Privacy Act of 2012) and its Implementing Rules and Regulations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
