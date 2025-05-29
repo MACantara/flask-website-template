@@ -1,0 +1,91 @@
+<!-- Table Row Content Based on Log Type -->
+{% if log_type == 'login_attempts' %}
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+    {{ log.username_or_email or 'Unknown' }}
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.ip_address }}
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+    <span
+        class="px-2 py-1 text-xs rounded-full {{ 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' if log.success else 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+        {{ 'Success' if log.success else 'Failed' }}
+    </span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.attempted_at.strftime('%m/%d/%Y %H:%M:%S') }}
+</td>
+{% elif log_type == 'user_registrations' %}
+<td class="px-6 py-4 whitespace-nowrap">
+    <div class="flex items-center">
+        <div
+            class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+            {{ log.username[0].upper() }}
+        </div>
+        <div class="ml-3">
+            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ log.username
+                }}</div>
+        </div>
+    </div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.email }}
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+    <div class="flex space-x-1">
+        {% if log.is_active %}
+        <span
+            class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Active</span>
+        {% else %}
+        <span
+            class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Inactive</span>
+        {% endif %}
+        {% if log.is_admin %}
+        <span
+            class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">Admin</span>
+        {% endif %}
+    </div>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.created_at.strftime('%m/%d/%Y %H:%M:%S') }}
+</td>
+{% elif log_type == 'email_verifications' %}
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+    {{ log.email }}
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {% if log.user %}
+    {{ log.user.username }}
+    {% else %}
+    Unknown
+    {% endif %}
+</td>
+<td class="px-6 py-4 whitespace-nowrap">
+    {% if log.is_verified %}
+    <span
+        class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Verified</span>
+    {% elif log.is_expired() %}
+    <span
+        class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">Expired</span>
+    {% else %}
+    <span
+        class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">Pending</span>
+    {% endif %}
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.created_at.strftime('%m/%d/%Y %H:%M:%S') }}
+</td>
+{% elif log_type == 'contact_submissions' %}
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+    {{ log.name }}
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.email }}
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.subject[:50] }}{% if log.subject|length > 50 %}...{% endif %}
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+    {{ log.created_at.strftime('%m/%d/%Y %H:%M:%S') }}
+</td>
+{% endif %}
