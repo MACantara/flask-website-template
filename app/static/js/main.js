@@ -1,11 +1,9 @@
 import dropdownManager from './utils/dropdown-toggle.js';
-import flashMessageManager from './utils/flash-messages.js';
 import themeManager from './utils/theme/theme-manager.js';
 
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize all managers
     dropdownManager.init();
-    flashMessageManager.init();
     themeManager.init();
 
     // Close alert messages
@@ -91,4 +89,4 @@ function showAlert(message, type = "success") {
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
-}   
+}
