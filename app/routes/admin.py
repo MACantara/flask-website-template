@@ -144,7 +144,7 @@ def user_detail(user_id):
     verifications = EmailVerification.query.filter_by(user_id=user.id)\
         .order_by(desc(EmailVerification.created_at)).all()
     
-    return render_template('admin/user_detail.html', 
+    return render_template('admin/user-detail.html', 
                          user=user,
                          login_attempts=all_attempts[:20],
                          verifications=verifications)
