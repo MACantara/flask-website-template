@@ -1,6 +1,6 @@
 import dropdownManager from './utils/dropdown-toggle.js';
 import flashMessageManager from './utils/flash-messages.js';
-import themeManager from './utils/theme-manager.js';
+import themeManager from './utils/theme/theme-manager.js';
 
 // Mobile menu toggle
 document.addEventListener("DOMContentLoaded", function () {
