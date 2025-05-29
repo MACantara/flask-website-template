@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
@@ -69,9 +69,20 @@ def create_app(config_name=None):
         def inject_current_date():
             from datetime import datetime
             current_date = datetime.now()
+            
+            # Get current user for templates
+            current_user = None
+            if session.get('user_id') and not app.config.get('DISABLE_DATABASE', False):
+                try:
+                    from app.models.user import User
+                    current_user = User.query.get(session.get('user_id'))
+                except:
+                    pass
+            
             return {
                 'current_year': current_date.year,
-                'current_date': current_date
+                'current_date': current_date,
+                'current_user': current_user
             }
 
     # Make hCaptcha available in templates
