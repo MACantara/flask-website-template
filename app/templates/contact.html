@@ -108,4 +108,7 @@
 
 {% block extra_js %}
 <script src="{{ url_for('static', filename='js/contact.js') }}"></script>
+{% if hcaptcha_enabled() %}
+<script src="{{ url_for('static', filename='js/hcaptcha-handler.js') }}"></script>
+{% endif %}
 {% endblock %}
