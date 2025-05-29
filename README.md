@@ -238,9 +238,11 @@ flask-website-template/
 │   │   │   ├── about.css                                   // About page specific styles
 │   │   │   ├── contact.css                                 // Contact page specific styles
 │   │   │   ├── home.css                                    // Home page specific styles
-│   │   │   └── main.css                                    // Main stylesheet with animations
+│   │   │   └── main.css                                    // Main stylesheet with animations and toast styles
 │   │   ├── images/                                         // Images directory
 │   │   └── js/                                             // JavaScript files
+│   │       ├── components/                                 // JavaScript components
+│   │       │   └── toast.js                                // Toast notification system
 │   │       ├── utils/                                      // Utility JavaScript modules
 │   │       │   ├── pagination/                             // Pagination utility modules
 │   │       │   │   ├── controls.js                         // Pagination controls (buttons, selectors)
@@ -251,7 +253,6 @@ flask-website-template/
 │   │       │   │   ├── theme-initializator.js              // Theme initialization
 │   │       │   │   └── theme-manager.js                    // Theme switching logic
 │   │       │   ├── dropdown-toggle.js                      // Dropdown functionality
-│   │       │   ├── flash-messages.js                       // Flash message handling
 │   │       │   └── pagination.js                           // Main pagination entry point
 │   │       ├── about.js                                    // About page functionality
 │   │       ├── admin.js                                    // Admin panel functionality
@@ -310,7 +311,7 @@ flask-website-template/
 │   │   │   ├── edit-profile.html                           // Edit profile form
 │   │   │   └── profile.html                                // User profile page
 │   │   ├── about.html                                      // About page template
-│   │   ├── base.html                                       // Base template with auth navigation
+│   │   ├── base.html                                       // Base template with toast notifications
 │   │   ├── contact.html                                    // Contact page template
 │   │   └── home.html                                       // Home page template
 │   ├── utils/                                              // Utility modules
