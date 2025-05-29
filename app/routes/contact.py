@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_mail import Message
 from app import db, mail
 from app.models.contact import Contact
+from app.utils.hcaptcha_utils import verify_hcaptcha
 import re
 
 contact_bp = Blueprint('contact', __name__)
@@ -93,6 +94,11 @@ def contact_page():
         email = request.form.get('email', '').strip().lower()
         subject = request.form.get('subject', '').strip()
         message = request.form.get('message', '').strip()
+        
+        # Verify hCaptcha
+        if not verify_hcaptcha():
+            flash('Please complete the captcha verification.', 'error')
+            return render_template('contact.html')
         
         # Validation
         errors = []
