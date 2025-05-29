@@ -1,8 +1,0 @@
-<!-- Users Pagination -->
-{% macro build_pagination_url(page) -%}
-{{ url_for('admin.users', page=page, search=search, status=status_filter, per_page=request.args.get('per_page', '25')) }}
-{%- endmacro %}
-
-{% set extra_params = {'search': search, 'status': status_filter, 'per_page': request.args.get('per_page', '25')} %}
-
-{% include 'partials/shared/pagination.html' %}

@@ -1,8 +1,0 @@
-<!-- Logs Pagination -->
-{% macro build_pagination_url(page) -%}
-{{ url_for('logs.logs', type=log_type, page=page, per_page=request.args.get('per_page', '25')) }}
-{%- endmacro %}
-
-{% set extra_params = {'type': log_type, 'per_page': request.args.get('per_page', '25')} %}
-
-{% include 'partials/shared/pagination.html' %}
