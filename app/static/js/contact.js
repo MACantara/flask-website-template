@@ -1,6 +1,6 @@
 // Contact page specific functionality
 document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.querySelector('.contact-form');
+    const contactForm = document.querySelector('.contact-form, form');
     const submitButton = contactForm?.querySelector('button[type="submit"]');
     
     if (contactForm) {
@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Form submission handling
         contactForm.addEventListener('submit', function(e) {
+            // Check if hCaptcha is required and not solved
+            const hcaptchaElement = contactForm.querySelector('.h-captcha');
+            if (hcaptchaElement && submitButton && submitButton.disabled) {
+                e.preventDefault();
+                return false;
+            }
+            
             e.preventDefault();
             
             let isValid = true;
