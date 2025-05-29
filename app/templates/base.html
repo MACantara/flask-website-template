@@ -40,7 +40,9 @@
     <!-- Include Footer -->
     {% include 'partials/footer.html' %}
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <!-- Main JavaScript as ES6 module -->
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>
