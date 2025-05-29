@@ -10,7 +10,18 @@
         {% include 'partials/admin/users/filters.html' %}
 
         {% if users|length > 0 %}
+            <!-- Top Pagination -->
+            {% macro build_pagination_url(page) -%}
+            {{ url_for('admin.users', page=page, search=search, status=status_filter, per_page=request.args.get('per_page', '25')) }}
+            {%- endmacro %}
+            {% set position = 'top' %}
+            {% include 'partials/shared/pagination.html' %}
+            
             {% include 'partials/admin/users/table.html' %}
+            
+            <!-- Bottom Pagination -->
+            {% set position = 'bottom' %}
+            {% include 'partials/shared/pagination.html' %}
         {% else %}
             {% include 'partials/admin/users/empty_state.html' %}
         {% endif %}
