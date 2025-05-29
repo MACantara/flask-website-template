@@ -8,11 +8,11 @@
         {% include 'partials/admin/logs/header.html' %}
 
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-200 dark:border-gray-700 opacity-0 animate-fade-in-up mb-4" style="animation-delay: 0.1s;">
-            <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6">Recent Logs - {{ log_type.replace('_', ' ').title() }}</h2>
             {% include 'partials/admin/logs/filters.html' %}
         </div>
 
-        <div class="animate-fade-in-up opacity-0" style="animation-delay: 0.2s;">
+        <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">Recent Logs - {{ log_type.replace('_', ' ').title() }}</h2>
+        <div class="animate-fade-in-up opacity-0" style="animation-delay: 0.3s;">
             <!-- Top Pagination -->
             {% macro build_pagination_url(page) -%}
             {{ url_for('logs.logs', type=log_type, page=page, per_page=request.args.get('per_page', '25')) }}
