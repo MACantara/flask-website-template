@@ -32,7 +32,7 @@
                 <!-- Filter by Log Type -->
                 <div class="flex items-center mb-4 sm:mb-0">
                     <label for="logType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mr-3">Filter by:</label>
-                    <select id="logType" name="log_type" class="block w-full sm:w-auto border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" onchange="changeLogType()">
+                    <select id="logType" name="log_type" class="block w-full sm:w-auto border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                         <option value="login_attempts" {% if log_type == 'login_attempts' %}selected{% endif %}>Login Attempts</option>
                         <option value="user_registrations" {% if log_type == 'user_registrations' %}selected{% endif %}>User Registrations</option>
                         <option value="email_verifications" {% if log_type == 'email_verifications' %}selected{% endif %}>Email Verifications</option>
@@ -210,11 +210,5 @@
 {% endblock %}
 
 {% block extra_js %}
-<script>
-function changeLogType() {
-    const select = document.getElementById('logType');
-    const selectedType = select.value;
-    window.location.href = `{{ url_for('logs.logs') }}?type=${selectedType}`;
-}
-</script>
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 {% endblock %}
