@@ -14,6 +14,44 @@ A modern Flask-based website template featuring Home, About, and Contact pages w
 - Three-way theme system (Light/Dark/System)
 - Accessible and user-friendly interface
 - Legal Compliance Pages with 14-day change notice period
+- Comprehensive Admin Panel with user management and system monitoring
+
+## Admin Panel
+
+This template includes a powerful admin panel for site management:
+
+### 🛡️ Admin Features
+- **User Management**: View, activate/deactivate users, grant/revoke admin privileges
+- **System Monitoring**: Dashboard with real-time statistics and activity logs
+- **Security Logs**: Monitor login attempts, account lockouts, and security events
+- **Email Verification Tracking**: Monitor email verification status and history
+- **Contact Form Management**: View and manage contact form submissions
+- **Data Cleanup Tools**: Automated cleanup of old logs and expired tokens
+
+### 📊 Admin Dashboard
+- **Real-time Statistics**: Total users, active accounts, recent registrations
+- **Activity Monitoring**: Recent login attempts, failed logins, security events
+- **User Analytics**: Registration trends, verification rates, account status
+- **Quick Actions**: Cleanup tools, user management shortcuts
+
+### 🔐 Admin Access
+- **Default Admin Account**: username: `admin`, password: `admin123` (change in production!)
+- **Role-based Access**: Admin-only routes with decorator protection
+- **Security Features**: IP-based lockout protection, session management
+
+### 📋 Log Management
+- **Login Attempts**: Monitor successful and failed login attempts with IP tracking
+- **User Registrations**: Track new account creation and verification status
+- **Email Verifications**: Monitor email verification requests and completion
+- **Contact Submissions**: View contact form submissions and responses
+- **Automated Cleanup**: Remove old logs and expired tokens automatically
+
+### 🎯 Admin Routes
+- `/admin/` - Main dashboard with statistics and recent activity
+- `/admin/users` - User management with search and filtering
+- `/admin/user/<id>` - Detailed user information and activity history
+- `/admin/logs` - System logs with pagination and filtering
+- `/admin/cleanup` - Database cleanup and maintenance tools
 
 ## Legal Compliance
 
