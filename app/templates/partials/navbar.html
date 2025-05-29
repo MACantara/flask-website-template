@@ -33,7 +33,7 @@
                     
                     <!-- User Dropdown -->
                     <div class="relative">
-                        <button class="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700" data-dropdown-toggle="userDropdown">
+                        <button class="flex items-center text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer" data-dropdown-toggle="userDropdown">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm mr-2">
                                 {{ session.username[0].upper() }}
                             </div>
@@ -71,7 +71,7 @@
 
                 <!-- Theme Dropdown -->
                 <div class="relative" id="theme-dropdown">
-                    <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 transform rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-1" aria-label="Select theme" title="Select theme" data-dropdown-toggle="theme-menu">
+                    <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 hover:scale-110 transform rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center space-x-1 cursor-pointer" aria-label="Select theme" title="Select theme" data-dropdown-toggle="theme-menu">
                         <i class="bi bi-sun-fill text-xl theme-light"></i>
                         <i class="bi bi-moon-fill text-xl theme-dark hidden"></i>
                         <i class="bi bi-circle-half text-xl theme-system hidden"></i>
@@ -79,15 +79,15 @@
                     </button>
                     <div id="theme-menu" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
                         <div class="py-1">
-                            <button data-theme="light" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2">
+                            <button data-theme="light" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 cursor-pointer">
                                 <i class="bi bi-sun-fill"></i>
                                 <span>Light</span>
                             </button>
-                            <button data-theme="dark" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2">
+                            <button data-theme="dark" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 cursor-pointer">
                                 <i class="bi bi-moon-fill"></i>
                                 <span>Dark</span>
                             </button>
-                            <button data-theme="system" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2">
+                            <button data-theme="system" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 cursor-pointer">
                                 <i class="bi bi-circle-half"></i>
                                 <span>System</span>
                             </button>

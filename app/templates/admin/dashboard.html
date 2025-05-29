@@ -162,7 +162,7 @@
             <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">Quick Actions</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <form method="POST" action="{{ url_for('admin.cleanup_logs') }}" class="inline">
-                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center cursor-pointer">
                         <i class="bi bi-trash mr-2"></i>
                         Cleanup Old Logs
                     </button>
