@@ -98,7 +98,7 @@ class PasswordValidator:
                 1: 'weak', 
                 2: 'fair',
                 3: 'good',
-                4: 'strong'
+                4: 'very strong'
             }
             
             return {
