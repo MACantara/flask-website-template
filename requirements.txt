@@ -33,3 +33,6 @@ pytest-flask
 
 # hCaptcha
 flask-hcaptcha
+
+# Password strength checking
+zxcvbn
