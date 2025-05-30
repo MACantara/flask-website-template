@@ -117,7 +117,7 @@ class PasswordStrengthChecker {
         if (/[^A-Za-z0-9]/.test(password)) score++;
         else feedback.push('Add special characters');
         
-        const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Good', 'Very strong'];
+        const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong'];
         const label = strengthLabels[Math.min(score, 4)] || 'Very weak';
         
         this.updateDisplay(score, label, { suggestions: feedback });
@@ -131,7 +131,7 @@ class PasswordStrengthChecker {
             'bg-orange-500', 
             'bg-yellow-500',
             'bg-blue-500',
-            'bg-purple-500'
+            'bg-green-500'
         ];
         
         bars.forEach((bar, index) => {
@@ -177,7 +177,7 @@ class PasswordStrengthChecker {
             'text-orange-600 dark:text-orange-400',
             'text-yellow-600 dark:text-yellow-400', 
             'text-blue-600 dark:text-blue-400',
-            'text-purple-600 dark:text-purple-400'
+            'text-green-600 dark:text-green-400'
         ];
         return colors[score] || colors[0];
     }
