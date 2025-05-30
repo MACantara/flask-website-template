@@ -27,6 +27,25 @@
             {% endif %}
         </div>
 
+        <!-- Show special info for login attempts -->
+        {% if request.args.get('login_attempt') == 'true' %}
+        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 opacity-0 animate-fade-in-up" style="animation-delay: 0.15s;">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="bi bi-info-circle text-blue-400 text-xl"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                        Login Temporarily Blocked
+                    </h3>
+                    <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                        <p>Your account exists, but you must verify your email address before logging in.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Main Content -->
         <div class="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 space-y-6 opacity-0 animate-fade-in-left" style="animation-delay: 0.2s;">
             <!-- Email Information -->

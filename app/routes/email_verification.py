@@ -195,9 +195,12 @@ def verification_pending():
     user_email = request.args.get('user_email')
     email_sent = request.args.get('email_sent', 'true') == 'true'
     resent = request.args.get('resent')
+    login_attempt = request.args.get('login_attempt')
     
     # Show appropriate flash message based on context
-    if resent == 'true':
+    if login_attempt == 'true':
+        flash('Please verify your email address before logging in. Check your email and click the verification link.', 'warning')
+    elif resent == 'true':
         flash('Verification email sent! Please check your email and click the verification link.', 'success')
     elif resent == 'false':
         flash('Could not send verification email. Please try again later.', 'error')

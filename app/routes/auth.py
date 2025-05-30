@@ -53,54 +53,51 @@ def login():
         if locked_out:
             return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes_remaining)
         
-        # Find user by username or email
+        # Find user by username or email first
         user = User.query.filter(
             (User.username == username_or_email) | 
             (User.email == username_or_email)
         ).first()
         
-        if user and user.is_active and user.check_password(password):
-            # Check if email is verified before allowing login
+        # Check if user exists and is active
+        if user and user.is_active:
+            # Check email verification status FIRST before validating password
             is_verified, user_id, user_email = check_email_verification_status(user)
             if not is_verified:
-                record_login_attempt(username_or_email, success=False)
+                # Don't record failed login attempt - this is not an authentication failure
+                # Just redirect to verification pending page
                 return redirect(url_for('email_verification.verification_pending',
                                       user_id=user_id,
                                       user_email=user_email,
                                       login_attempt='true'))
             
-            # Successful login - record success
-            record_login_attempt(username_or_email, success=True)
-            
-            session['user_id'] = user.id
-            session['username'] = user.username
-            session.permanent = remember_me
-            user.update_last_login()
-            
-            flash(f'Welcome back, {user.username}!', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
-        else:
-            # Failed login - record failure
-            record_login_attempt(username_or_email, success=False)
-            
-            # Check if this failure causes a lockout
-            if is_lockout_triggered():
-                lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
-                return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
-            else:
-                attempts_remaining = get_remaining_attempts()
-                # Check if user exists but email is not verified
-                if user and user.is_active:
-                    is_verified, user_id, user_email = check_email_verification_status(user)
-                    if not is_verified:
-                        flash(f'Please verify your email before logging in. {attempts_remaining} attempts remaining.', 'warning')
-                        return render_template('auth/login.html', 
-                                             show_resend_verification=True, 
-                                             user_email=user_email, 
-                                             user_id=user_id)
+            # Now check password only if email is verified
+            if user.check_password(password):
+                # Successful login - record success
+                record_login_attempt(username_or_email, success=True)
                 
-                flash(f'Invalid username/email or password. {attempts_remaining} attempts remaining.', 'error')
+                session['user_id'] = user.id
+                session['username'] = user.username
+                session.permanent = remember_me
+                user.update_last_login()
+                
+                flash(f'Welcome back, {user.username}!', 'success')
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('main.home'))
+            else:
+                # Wrong password - record failure
+                record_login_attempt(username_or_email, success=False)
+        else:
+            # User doesn't exist or is inactive - record failure
+            record_login_attempt(username_or_email, success=False)
+        
+        # Check if this failure causes a lockout
+        if is_lockout_triggered():
+            lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
+            return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
+        else:
+            attempts_remaining = get_remaining_attempts()
+            flash(f'Invalid username/email or password. {attempts_remaining} attempts remaining.', 'error')
     
     return render_template('auth/login.html')
 
