@@ -102,6 +102,9 @@ class PasswordStrengthChecker {
         let score = 0;
         let feedback = [];
         
+        // Start with score 1 for any password that exists (so "very weak" shows up)
+        if (password.length > 0) score = 1;
+        
         if (password.length >= 8) score++;
         else feedback.push('Use at least 8 characters');
         
@@ -117,29 +120,31 @@ class PasswordStrengthChecker {
         if (/[^A-Za-z0-9]/.test(password)) score++;
         else feedback.push('Add special characters');
         
-        const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong'];
-        const label = strengthLabels[Math.min(score, 4)] || 'Very weak';
+        // Cap the score at 5, but map to 0-4 scale for display
+        const displayScore = Math.min(score - 1, 4);
+        const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Good', 'Very strong'];
+        const label = strengthLabels[displayScore] || 'Very weak';
         
-        this.updateDisplay(score, label, { suggestions: feedback });
+        this.updateDisplay(displayScore + 1, label, { suggestions: feedback });
     }
     
     updateDisplay(score, label, feedback) {
         // Update strength meter
         const bars = this.strengthContainer.querySelectorAll('.strength-bar');
         const colors = [
-            'bg-red-500',
-            'bg-orange-500', 
-            'bg-yellow-500',
-            'bg-blue-500',
-            'bg-green-500'
+            'bg-red-500',      // Very weak
+            'bg-orange-500',   // Weak
+            'bg-yellow-500',   // Fair
+            'bg-blue-500',     // Good
+            'bg-purple-500'    // Very strong
         ];
         
         bars.forEach((bar, index) => {
             // Reset classes
             bar.className = 'strength-bar flex-1 h-1 rounded';
             
-            if (index < score) {
-                bar.classList.add(colors[score - 1] || 'bg-gray-200');
+            if (index < score && score > 0) {
+                bar.classList.add(colors[score - 1]);
             } else {
                 bar.classList.add('bg-gray-200', 'dark:bg-gray-700');
             }
@@ -173,13 +178,13 @@ class PasswordStrengthChecker {
     
     getLabelColor(score) {
         const colors = [
-            'text-red-600 dark:text-red-400',
-            'text-orange-600 dark:text-orange-400',
-            'text-yellow-600 dark:text-yellow-400', 
-            'text-blue-600 dark:text-blue-400',
-            'text-green-600 dark:text-green-400'
+            'text-red-600 dark:text-red-400',      // Very weak
+            'text-orange-600 dark:text-orange-400', // Weak
+            'text-yellow-600 dark:text-yellow-400', // Fair
+            'text-blue-600 dark:text-blue-400',     // Good
+            'text-purple-600 dark:text-purple-400'  // Very strong
         ];
-        return colors[score] || colors[0];
+        return colors[score - 1] || colors[0];
     }
     
     setUserInputs(inputs) {
