@@ -16,12 +16,28 @@ A modern, production-ready Flask website template featuring comprehensive authen
 
 ## 🚀 Quick Start
 
-### 1. Setup
+### 1. Clone Repository
 ```bash
 git clone <repository-url>
 cd flask-website-template
+```
+
+### 2. Create Virtual Environment
+```bash
 python -m venv venv
-source venv/bin/activate  # or venv\Scripts\activate on Windows
+```
+
+### 3. Activate Virtual Environment
+```bash
+# On Windows
+venv\Scripts\activate
+
+# On macOS/Linux
+source venv/bin/activate
+```
+
+### 4. Install Dependencies
+```bash
 pip install -r requirements.txt
 ```
 
