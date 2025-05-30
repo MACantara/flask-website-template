@@ -54,9 +54,13 @@
                     </div>
                     {% endif %}
                     
-                    <button type="submit" class="group w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold text-lg rounded-xl hover:from-green-700 hover:to-teal-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-green-500/25 shadow-xl hover:shadow-2xl opacity-0 animate-fade-in-up cursor-pointer hover:scale-105 transform" style="animation-delay: 0.5s;">
-                        <i class="bi bi-send mr-3"></i>
-                        <span>Send Message</span>
+                    <button type="submit" id="contact-btn" class="group w-full inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold text-lg rounded-xl hover:from-green-700 hover:to-teal-700 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-green-500/25 shadow-xl hover:shadow-2xl opacity-0 animate-fade-in-up cursor-pointer hover:scale-105 transform" style="animation-delay: 0.5s;">
+                        <i class="bi bi-send mr-3 submit-icon"></i>
+                        <div class="hidden animate-spin submit-spinner">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </div>
+                        <span class="submit-text">Send Message</span>
+                        <span class="hidden submit-loading-text">Sending Message...</span>
                     </button>
                 </form>
             </div>
