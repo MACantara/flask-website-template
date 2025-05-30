@@ -178,12 +178,12 @@ def resend_verification():
     
     # Clear any existing flash messages by redirecting to a clean verification pending page
     if email_sent:
-        return redirect(url_for('auth.verification_pending', 
+        return redirect(url_for('email_verification.verification_pending', 
                               user_id=user.id, 
                               user_email=user.email,
                               resent='true'))
     else:
-        return redirect(url_for('auth.verification_pending', 
+        return redirect(url_for('email_verification.verification_pending', 
                               user_id=user.id, 
                               user_email=user.email,
                               resent='false'))
