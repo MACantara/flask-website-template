@@ -5,6 +5,7 @@ from app.models.email_verification import EmailVerification
 from app.routes.login_attempts import check_ip_lockout, record_login_attempt, get_remaining_attempts, is_lockout_triggered
 from app.routes.email_verification import create_and_send_verification
 from app.utils.hcaptcha_utils import verify_hcaptcha
+from app.utils.password_validator import PasswordValidator
 from argon2.exceptions import HashingError
 import re
 
@@ -21,18 +22,9 @@ def is_valid_username(username):
     pattern = r'^[a-zA-Z0-9_]{3,30}$'
     return re.match(pattern, username) is not None
 
-def is_valid_password(password):
-    """Validate password strength."""
-    # At least 8 characters, one uppercase, one lowercase, one digit
-    if len(password) < 8:
-        return False, "Password must be at least 8 characters long"
-    if not re.search(r'[A-Z]', password):
-        return False, "Password must contain at least one uppercase letter"
-    if not re.search(r'[a-z]', password):
-        return False, "Password must contain at least one lowercase letter"
-    if not re.search(r'\d', password):
-        return False, "Password must contain at least one digit"
-    return True, "Password is valid"
+def is_valid_password(password, user_inputs=None):
+    """Validate password strength using zxcvbn."""
+    return PasswordValidator.validate_password(password, user_inputs or [])
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -140,9 +132,11 @@ def signup():
         if not password:
             errors.append('Password is required.')
         else:
-            is_valid, message = is_valid_password(password)
+            # Use zxcvbn validation with user inputs
+            user_inputs = [username, email.split('@')[0]] if email else [username]
+            is_valid, password_errors, _ = PasswordValidator.validate_password(password, user_inputs)
             if not is_valid:
-                errors.append(message)
+                errors.extend(password_errors)
         
         if password != confirm_password:
             errors.append('Passwords do not match.')

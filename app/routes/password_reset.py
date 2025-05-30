@@ -3,22 +3,15 @@ from flask_mail import Message
 from app import db, mail
 from app.models.user import User, PasswordResetToken
 from app.utils.hcaptcha_utils import verify_hcaptcha
+from app.utils.password_validator import PasswordValidator
 from argon2.exceptions import HashingError
 import re
 
 password_reset_bp = Blueprint('password_reset', __name__, url_prefix='/password')
 
-def is_valid_password(password):
-    """Validate password strength."""
-    if len(password) < 8:
-        return False, "Password must be at least 8 characters long"
-    if not re.search(r'[A-Z]', password):
-        return False, "Password must contain at least one uppercase letter"
-    if not re.search(r'[a-z]', password):
-        return False, "Password must contain at least one lowercase letter"
-    if not re.search(r'\d', password):
-        return False, "Password must contain at least one digit"
-    return True, "Password is valid"
+def is_valid_password(password, user_inputs=None):
+    """Validate password strength using zxcvbn."""
+    return PasswordValidator.validate_password(password, user_inputs or [])
 
 def send_reset_email(user, token):
     """Send password reset email."""
@@ -142,9 +135,12 @@ def reset_password(token):
         if not password:
             errors.append('Password is required.')
         else:
-            is_valid, message = is_valid_password(password)
+            # Use zxcvbn validation with user context
+            user = reset_token.user
+            user_inputs = [user.username, user.email.split('@')[0]] if user.email else [user.username]
+            is_valid, password_errors, _ = PasswordValidator.validate_password(password, user_inputs)
             if not is_valid:
-                errors.append(message)
+                errors.extend(password_errors)
         
         if password != confirm_password:
             errors.append('Passwords do not match.')
