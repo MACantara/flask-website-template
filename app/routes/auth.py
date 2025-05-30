@@ -179,9 +179,14 @@ def verification_pending():
     user_id = request.args.get('user_id')
     user_email = request.args.get('user_email')
     email_sent = request.args.get('email_sent', 'true') == 'true'
+    resent = request.args.get('resent')
     
-    # Show appropriate flash message
-    if email_sent:
+    # Show appropriate flash message based on context
+    if resent == 'true':
+        flash('Verification email sent! Please check your email and click the verification link.', 'success')
+    elif resent == 'false':
+        flash('Could not send verification email. Please try again later.', 'error')
+    elif email_sent:
         flash('Account created successfully! Please check your email and click the verification link before logging in.', 'success')
     else:
         flash('Account created successfully! However, we could not send the verification email. Please contact support.', 'warning')
@@ -232,14 +237,17 @@ def resend_verification():
     # Create new verification
     verification, email_sent = create_and_send_verification(user)
     
+    # Clear any existing flash messages by redirecting to a clean verification pending page
     if email_sent:
-        flash('Verification email sent! Please check your email and click the verification link.', 'success')
+        return redirect(url_for('auth.verification_pending', 
+                              user_id=user.id, 
+                              user_email=user.email,
+                              resent='true'))
     else:
-        flash('Could not send verification email. Please try again later.', 'error')
-    
-    return redirect(url_for('auth.verification_pending', 
-                          user_id=user.id, 
-                          user_email=user.email))
+        return redirect(url_for('auth.verification_pending', 
+                              user_id=user.id, 
+                              user_email=user.email,
+                              resent='false'))
 
 @auth_bp.route('/logout')
 def logout():
