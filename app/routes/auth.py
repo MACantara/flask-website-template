@@ -30,7 +30,7 @@ def login():
         return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes_remaining)
     
     if request.method == 'POST':
-        username_or_email = request.form.get('username_or_email', '').strip()
+        username_or_email = request.form.get('username_or_email', '').strip().lower()
         password = request.form.get('password')
         remember_me = request.form.get('remember_me') == 'on'
         
@@ -107,7 +107,7 @@ def login():
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form.get('username', '').strip()
+        username = request.form.get('username', '').strip().lower()
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
