@@ -204,3 +204,81 @@ html {
     transform: translateY(-0.5rem) scale(0.85);
     color: #3b82f6;
 }
+
+/* Form submission loading states */
+.submit-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loading button states */
+.loading-btn {
+    pointer-events: none;
+    position: relative;
+}
+
+.loading-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Form submission feedback */
+.form-submitting {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.form-submitting input,
+.form-submitting textarea,
+.form-submitting select {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+}
+
+.dark .form-submitting input,
+.dark .form-submitting textarea,
+.dark .form-submitting select {
+    background-color: #374151;
+}
+
+/* Submit button loading states */
+button[type="submit"]:disabled {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+button[type="submit"]:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Pulse animation for loading states */
+@keyframes pulse-slow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
