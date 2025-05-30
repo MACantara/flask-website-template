@@ -34,32 +34,35 @@ class PasswordValidator {
             const validationContainer = document.createElement('div');
             validationContainer.className = 'password-validation mt-2';
             validationContainer.innerHTML = `
-                <div class="text-xs space-y-1">
-                    <div class="requirement-item flex items-center" data-requirement="length">
-                        <i class="bi bi-circle mr-2 text-gray-400 requirement-icon"></i>
-                        <span class="text-gray-600 dark:text-gray-400">At least ${this.options.minLength} characters</span>
-                    </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                    Password must contain:
+                </p>
+                <p class="text-xs text-gray-600 dark:text-gray-400 space-x-4">
+                    <span class="requirement-item inline-flex items-center" data-requirement="length">
+                        <i class="bi bi-circle mr-1 text-gray-400 requirement-icon text-xs"></i>
+                        <span>${this.options.minLength}+ chars</span>
+                    </span>
                     ${this.options.requireUppercase ? `
-                    <div class="requirement-item flex items-center" data-requirement="uppercase">
-                        <i class="bi bi-circle mr-2 text-gray-400 requirement-icon"></i>
-                        <span class="text-gray-600 dark:text-gray-400">One uppercase letter</span>
-                    </div>` : ''}
+                    <span class="requirement-item inline-flex items-center" data-requirement="uppercase">
+                        <i class="bi bi-circle mr-1 text-gray-400 requirement-icon text-xs"></i>
+                        <span>A-Z</span>
+                    </span>` : ''}
                     ${this.options.requireLowercase ? `
-                    <div class="requirement-item flex items-center" data-requirement="lowercase">
-                        <i class="bi bi-circle mr-2 text-gray-400 requirement-icon"></i>
-                        <span class="text-gray-600 dark:text-gray-400">One lowercase letter</span>
-                    </div>` : ''}
+                    <span class="requirement-item inline-flex items-center" data-requirement="lowercase">
+                        <i class="bi bi-circle mr-1 text-gray-400 requirement-icon text-xs"></i>
+                        <span>a-z</span>
+                    </span>` : ''}
                     ${this.options.requireNumbers ? `
-                    <div class="requirement-item flex items-center" data-requirement="numbers">
-                        <i class="bi bi-circle mr-2 text-gray-400 requirement-icon"></i>
-                        <span class="text-gray-600 dark:text-gray-400">One number</span>
-                    </div>` : ''}
+                    <span class="requirement-item inline-flex items-center" data-requirement="numbers">
+                        <i class="bi bi-circle mr-1 text-gray-400 requirement-icon text-xs"></i>
+                        <span>0-9</span>
+                    </span>` : ''}
                     ${this.options.requireSpecialChars ? `
-                    <div class="requirement-item flex items-center" data-requirement="special">
-                        <i class="bi bi-circle mr-2 text-gray-400 requirement-icon"></i>
-                        <span class="text-gray-600 dark:text-gray-400">One special character</span>
-                    </div>` : ''}
-                </div>
+                    <span class="requirement-item inline-flex items-center" data-requirement="special">
+                        <i class="bi bi-circle mr-1 text-gray-400 requirement-icon text-xs"></i>
+                        <span>!@#$</span>
+                    </span>` : ''}
+                </p>
             `;
             
             this.passwordInput.parentNode.insertBefore(validationContainer, this.passwordInput.nextSibling);
@@ -71,10 +74,10 @@ class PasswordValidator {
             const matchingContainer = document.createElement('div');
             matchingContainer.className = 'password-matching mt-2 hidden';
             matchingContainer.innerHTML = `
-                <div class="text-xs flex items-center" id="password-match-status">
+                <p class="text-xs flex items-center" id="password-match-status">
                     <i class="bi bi-circle mr-2 text-gray-400"></i>
                     <span class="text-gray-600 dark:text-gray-400">Passwords match</span>
-                </div>
+                </p>
             `;
             
             this.confirmPasswordInput.parentNode.insertBefore(matchingContainer, this.confirmPasswordInput.nextSibling);
@@ -128,10 +131,10 @@ class PasswordValidator {
                 const span = item.querySelector('span');
                 
                 if (valid) {
-                    icon.className = 'bi bi-check-circle-fill mr-2 text-green-500 requirement-icon';
-                    span.className = 'text-green-600 dark:text-green-400';
+                    icon.className = 'bi bi-check-circle-fill mr-1 text-green-500 requirement-icon text-xs';
+                    span.className = 'text-green-600 dark:text-green-400 font-medium';
                 } else {
-                    icon.className = 'bi bi-circle mr-2 text-gray-400 requirement-icon';
+                    icon.className = 'bi bi-circle mr-1 text-gray-400 requirement-icon text-xs';
                     span.className = 'text-gray-600 dark:text-gray-400';
                 }
             }
@@ -161,11 +164,11 @@ class PasswordValidator {
         
         if (isMatching) {
             icon.className = 'bi bi-check-circle-fill mr-2 text-green-500';
-            span.className = 'text-green-600 dark:text-green-400';
+            span.className = 'text-green-600 dark:text-green-400 font-medium';
             span.textContent = 'Passwords match';
         } else {
             icon.className = 'bi bi-x-circle-fill mr-2 text-red-500';
-            span.className = 'text-red-600 dark:text-red-400';
+            span.className = 'text-red-600 dark:text-red-400 font-medium';
             span.textContent = 'Passwords do not match';
         }
         
