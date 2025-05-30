@@ -188,7 +188,7 @@ def resend_verification():
                               user_email=user.email,
                               resent='false'))
 
-@email_verification_bp.route('/verification-pending')
+@email_verification_bp.route('/verification-pending', methods=['GET', 'POST']) # POST for resend verification button
 def verification_pending():
     """Show verification pending page after signup."""
     user_id = request.args.get('user_id')
