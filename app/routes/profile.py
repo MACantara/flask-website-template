@@ -40,8 +40,8 @@ def edit_profile():
         return redirect(url_for('auth.login'))
     
     if request.method == 'POST':
-        username = request.form.get('username', '').strip()
-        email = request.form.get('email', '').strip()
+        username = request.form.get('username', '').strip().lower()
+        email = request.form.get('email', '').strip().lower()
         current_password = request.form.get('current_password', '').strip()
         new_password = request.form.get('new_password', '').strip()
         confirm_password = request.form.get('confirm_password', '').strip()
