@@ -1,4 +1,5 @@
 import PasswordStrengthChecker from "./components/password-strength.js";
+import PasswordValidator from "./components/password-validator.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const usernameInput = document.getElementById("username");
@@ -11,6 +12,17 @@ document.addEventListener("DOMContentLoaded", function () {
         userInputs: [],
     });
 
+    // Initialize password validator for requirements and matching
+    const passwordValidator = new PasswordValidator("password", "confirm_password", {
+        showValidation: true,
+        showMatching: true,
+        minLength: 8,
+        requireUppercase: true,
+        requireLowercase: true,
+        requireNumbers: true,
+        requireSpecialChars: false
+    });
+
     // Update user inputs when username or email changes
     function updateUserInputs() {
         const userInputs = [];
@@ -21,4 +33,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     usernameInput.addEventListener("input", updateUserInputs);
     emailInput.addEventListener("input", updateUserInputs);
+
+    // Form validation on submit
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!passwordValidator.isValid()) {
+                e.preventDefault();
+                const errors = passwordValidator.getValidationErrors();
+                
+                // Show first error as toast notification if available
+                if (window.toastManager && errors.length > 0) {
+                    window.toastManager.showToast(errors[0], 'error');
+                }
+            }
+        });
+    }
 });
