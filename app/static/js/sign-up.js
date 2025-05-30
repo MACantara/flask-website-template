@@ -1,5 +1,6 @@
 import PasswordStrengthChecker from "./components/password-strength.js";
 import PasswordValidator from "./components/password-validator.js";
+import hcaptchaValidator from "./utils/hcaptcha-validator.js";
 
 document.addEventListener("DOMContentLoaded", function () {
     const usernameInput = document.getElementById("username");
@@ -38,14 +39,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // Check password validation
             if (!passwordValidator.isValid()) {
-                e.preventDefault();
+                isValid = false;
                 const errors = passwordValidator.getValidationErrors();
                 
                 // Show first error as toast notification if available
                 if (window.toastManager && errors.length > 0) {
                     window.toastManager.showToast(errors[0], 'error');
                 }
+            }
+            
+            // Check hCaptcha validation
+            if (!hcaptchaValidator.validateForm(form)) {
+                isValid = false;
+                // hcaptchaValidator will handle showing the error
+            }
+            
+            if (!isValid) {
+                e.preventDefault();
             }
         });
     }
