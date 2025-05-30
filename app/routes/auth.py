@@ -152,12 +152,17 @@ def signup():
             # Create verification and send email
             verification, email_sent = create_and_send_verification(user)
             
+            # Redirect to verification pending page instead of login
             if email_sent:
-                flash('Account created successfully! Please check your email and click the verification link before logging in.', 'success')
+                return redirect(url_for('auth.verification_pending', 
+                                      user_id=user.id, 
+                                      user_email=user.email,
+                                      email_sent='true'))
             else:
-                flash('Account created successfully! However, we could not send the verification email. Please contact support.', 'warning')
-            
-            return redirect(url_for('auth.login'))
+                return redirect(url_for('auth.verification_pending', 
+                                      user_id=user.id, 
+                                      user_email=user.email,
+                                      email_sent='false'))
             
         except HashingError:
             flash('Error creating account. Please try again.', 'error')
@@ -168,27 +173,41 @@ def signup():
     
     return render_template('auth/signup.html')
 
-@auth_bp.route('/verify-email/<token>')
-def verify_email(token):
-    """Handle email verification."""
-    verification = EmailVerification.get_by_token(token)
+@auth_bp.route('/verification-pending')
+def verification_pending():
+    """Show verification pending page after signup."""
+    user_id = request.args.get('user_id')
+    user_email = request.args.get('user_email')
+    email_sent = request.args.get('email_sent', 'true') == 'true'
     
-    if not verification:
-        flash('Invalid verification token.', 'error')
-        return redirect(url_for('auth.login'))
+    # Show appropriate flash message
+    if email_sent:
+        flash('Account created successfully! Please check your email and click the verification link before logging in.', 'success')
+    else:
+        flash('Account created successfully! However, we could not send the verification email. Please contact support.', 'warning')
     
-    if verification.is_expired():
-        flash('Verification token has expired. Please request a new one.', 'error')
-        return redirect(url_for('auth.login'))
+    return render_template('auth/verification-pending.html', 
+                         user_id=user_id, 
+                         user_email=user_email,
+                         email_sent=email_sent)
+
+@auth_bp.route('/check-verification-status', methods=['POST'])
+def check_verification_status():
+    """Check if user's email has been verified (AJAX endpoint)."""
+    data = request.get_json()
+    user_id = data.get('user_id')
+    user_email = data.get('user_email')
     
-    if verification.is_verified:
-        flash('Email address has already been verified. You can now log in.', 'info')
-        return redirect(url_for('auth.login'))
+    if not user_id or not user_email:
+        return {'verified': False, 'error': 'Invalid request'}
     
-    # Verify the email
-    verification.verify()
-    flash('Email address verified successfully! You can now log in.', 'success')
-    return redirect(url_for('auth.login'))
+    try:
+        # Check if email is verified
+        is_verified = EmailVerification.is_email_verified(user_id, user_email)
+        return {'verified': is_verified}
+    except Exception as e:
+        current_app.logger.error(f"Error checking verification status: {e}")
+        return {'verified': False, 'error': 'Check failed'}
 
 @auth_bp.route('/resend-verification', methods=['POST'])
 def resend_verification():
@@ -207,21 +226,20 @@ def resend_verification():
     
     # Check if already verified
     if EmailVerification.is_email_verified(user.id, user.email):
-        flash('Email address is already verified.', 'info')
+        flash('Email address is already verified. You can now log in.', 'info')
         return redirect(url_for('auth.login'))
     
     # Create new verification
-    verification = EmailVerification.create_verification(user.id, user.email)
-    
-    # Send verification email
-    email_sent = send_verification_email(user, verification)
+    verification, email_sent = create_and_send_verification(user)
     
     if email_sent:
         flash('Verification email sent! Please check your email and click the verification link.', 'success')
     else:
         flash('Could not send verification email. Please try again later.', 'error')
     
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('auth.verification_pending', 
+                          user_id=user.id, 
+                          user_email=user.email))
 
 @auth_bp.route('/logout')
 def logout():

@@ -69,14 +69,19 @@ Flask Template Team
         return False
 
 def create_and_send_verification(user):
-    """Create verification token and send email for a user."""
-    # Create email verification
-    verification = EmailVerification.create_verification(user.id, user.email)
-    
-    # Send verification email
-    email_sent = send_verification_email(user, verification)
-    
-    return verification, email_sent
+    """Create verification token and send email."""
+    try:
+        # Create verification record
+        verification = EmailVerification.create_verification(user.id, user.email)
+        
+        # Send verification email
+        email_sent = send_verification_email(user, verification)
+        
+        return verification, email_sent
+        
+    except Exception as e:
+        current_app.logger.error(f"Error creating verification for user {user.id}: {e}")
+        return None, False
 
 @email_verification_bp.route('/verify-email/<token>')
 def verify_email(token):
