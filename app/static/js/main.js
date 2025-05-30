@@ -1,12 +1,13 @@
 import dropdownManager from './utils/dropdown-toggle.js';
 import themeManager from './utils/theme/theme-manager.js';
 import hcaptchaValidator from './utils/hcaptcha-validator.js';
+import FormSubmissionHandler from './utils/form-submission-handler.js';
 
 document.addEventListener("DOMContentLoaded", function () {
     // Initialize all managers
     dropdownManager.init();
     themeManager.init();
-    // hcaptchaValidator initializes automatically
+    // hcaptchaValidator and FormSubmissionHandler initialize automatically
 
     // Close alert messages
     const closeAlertButtons = document.querySelectorAll(".close-alert");
