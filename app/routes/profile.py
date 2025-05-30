@@ -1,8 +1,15 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from app import db
 from app.models.user import User
+import re
 
 profile_bp = Blueprint('profile', __name__, url_prefix='/profile')
+
+def is_valid_username(username):
+    """Validate username format."""
+    # Username must be 3-30 characters, alphanumeric and underscores only
+    pattern = r'^[a-zA-Z0-9_]{3,30}$'
+    return re.match(pattern, username) is not None
 
 @profile_bp.route('/')
 def profile():
@@ -52,7 +59,7 @@ def edit_profile():
             return render_template('profile/edit-profile.html', user=user)
         
         # Validate username
-        if not username or len(username) < 3 or len(username) > 30:
+        if not username or len(username) < 3 or len(username) > 30 or not is_valid_username(username):
             flash('Username must be between 3 and 30 characters.', 'error')
             return render_template('profile/edit-profile.html', user=user)
         
