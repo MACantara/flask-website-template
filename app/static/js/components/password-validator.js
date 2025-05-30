@@ -14,7 +14,7 @@ class PasswordValidator {
             requireUppercase: true,
             requireLowercase: true,
             requireNumbers: true,
-            requireSpecialChars: false,
+            requireSpecialChars: true,
             ...options
         };
         

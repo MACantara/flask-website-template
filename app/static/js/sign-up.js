@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
         requireUppercase: true,
         requireLowercase: true,
         requireNumbers: true,
-        requireSpecialChars: false
+        requireSpecialChars: true
     });
 
     // Update user inputs when username or email changes

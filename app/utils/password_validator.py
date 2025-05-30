@@ -44,6 +44,10 @@ class PasswordValidator:
         if not re.search(r'\d', password):
             errors.append("Password must contain at least one digit.")
         
+        # Add special character requirement
+        if not re.search(r'[^A-Za-z0-9]', password):
+            errors.append("Password must contain at least one special character.")
+
         # Use zxcvbn for advanced strength checking
         try:
             result = zxcvbn(password, user_inputs=user_inputs)

@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
         requireUppercase: true,
         requireLowercase: true,
         requireNumbers: true,
-        requireSpecialChars: false
+        requireSpecialChars: true
     });
 
     // Form validation on submit
