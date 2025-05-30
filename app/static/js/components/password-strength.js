@@ -103,7 +103,7 @@ class PasswordStrengthChecker {
         let feedback = [];
         
         // Start with score 1 for any password that exists (so "very weak" shows up)
-        if (password.length > 0) score = 1;
+        if (password.length > 0) score = 0;
         
         if (password.length >= 8) score++;
         else feedback.push('Use at least 8 characters');
