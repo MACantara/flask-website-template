@@ -9,10 +9,6 @@ import re
 
 password_reset_bp = Blueprint('password_reset', __name__, url_prefix='/password')
 
-def is_valid_password(password, user_inputs=None):
-    """Validate password strength using zxcvbn."""
-    return PasswordValidator.validate_password(password, user_inputs or [])
-
 def send_reset_email(user, token):
     """Send password reset email."""
     if not current_app.config.get('MAIL_SERVER'):

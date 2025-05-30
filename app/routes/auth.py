@@ -22,10 +22,6 @@ def is_valid_username(username):
     pattern = r'^[a-zA-Z0-9_]{3,30}$'
     return re.match(pattern, username) is not None
 
-def is_valid_password(password, user_inputs=None):
-    """Validate password strength using zxcvbn."""
-    return PasswordValidator.validate_password(password, user_inputs or [])
-
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     # Check if IP is locked out
