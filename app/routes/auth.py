@@ -3,7 +3,7 @@ from app import db
 from app.models.user import User
 from app.models.email_verification import EmailVerification
 from app.routes.login_attempts import check_ip_lockout, record_login_attempt, get_remaining_attempts, is_lockout_triggered
-from app.routes.email_verification import create_and_send_verification
+from app.routes.email_verification import create_and_send_verification, check_email_verification_status
 from app.utils.hcaptcha_utils import verify_hcaptcha
 from app.utils.password_validator import PasswordValidator
 from argon2.exceptions import HashingError
@@ -30,7 +30,7 @@ def login():
         return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes_remaining)
     
     if request.method == 'POST':
-        username_or_email = request.form.get('username_or_email', '').strip()
+        username_or_email = request.form.get('username_or_email', '').strip().lower()
         password = request.form.get('password')
         remember_me = request.form.get('remember_me') == 'on'
         
@@ -53,47 +53,58 @@ def login():
         if locked_out:
             return render_template('auth/login.html', locked_out=True, minutes_remaining=minutes_remaining)
         
-        # Find user by username or email
+        # Find user by username or email first
         user = User.query.filter(
             (User.username == username_or_email) | 
             (User.email == username_or_email)
         ).first()
         
-        if user and user.is_active and user.check_password(password):
-            # Check if email is verified
-            if not EmailVerification.is_email_verified(user.id, user.email):
-                record_login_attempt(username_or_email, success=False)
-                return render_template('auth/login.html', show_resend_verification=True, user_email=user.email, user_id=user.id)
+        # Check if user exists and is active
+        if user and user.is_active:
+            # Check email verification status FIRST before validating password
+            is_verified, user_id, user_email = check_email_verification_status(user)
+            if not is_verified:
+                # Don't record failed login attempt - this is not an authentication failure
+                # Just redirect to verification pending page
+                return redirect(url_for('email_verification.verification_pending',
+                                      user_id=user_id,
+                                      user_email=user_email,
+                                      login_attempt='true'))
             
-            # Successful login - record success
-            record_login_attempt(username_or_email, success=True)
-            
-            session['user_id'] = user.id
-            session['username'] = user.username
-            session.permanent = remember_me
-            user.update_last_login()
-            
-            flash(f'Welcome back, {user.username}!', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('main.home'))
-        else:
-            # Failed login - record failure
-            record_login_attempt(username_or_email, success=False)
-            
-            # Check if this failure causes a lockout
-            if is_lockout_triggered():
-                lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
-                return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
+            # Now check password only if email is verified
+            if user.check_password(password):
+                # Successful login - record success
+                record_login_attempt(username_or_email, success=True)
+                
+                session['user_id'] = user.id
+                session['username'] = user.username
+                session.permanent = remember_me
+                user.update_last_login()
+                
+                flash(f'Welcome back, {user.username}!', 'success')
+                next_page = request.args.get('next')
+                return redirect(next_page) if next_page else redirect(url_for('main.home'))
             else:
-                attempts_remaining = get_remaining_attempts()
-                flash(f'Invalid username/email or password. {attempts_remaining} attempts remaining.', 'error')
+                # Wrong password - record failure
+                record_login_attempt(username_or_email, success=False)
+        else:
+            # User doesn't exist or is inactive - record failure
+            record_login_attempt(username_or_email, success=False)
+        
+        # Check if this failure causes a lockout
+        if is_lockout_triggered():
+            lockout_minutes = current_app.config.get('LOGIN_LOCKOUT_MINUTES', 15)
+            return render_template('auth/login.html', locked_out=True, minutes_remaining=lockout_minutes)
+        else:
+            attempts_remaining = get_remaining_attempts()
+            flash(f'Invalid username/email or password. {attempts_remaining} attempts remaining.', 'error')
     
     return render_template('auth/login.html')
 
 @auth_bp.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form.get('username', '').strip()
+        username = request.form.get('username', '').strip().lower()
         email = request.form.get('email', '').strip().lower()
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
@@ -152,12 +163,17 @@ def signup():
             # Create verification and send email
             verification, email_sent = create_and_send_verification(user)
             
+            # Redirect to verification pending page
             if email_sent:
-                flash('Account created successfully! Please check your email and click the verification link before logging in.', 'success')
+                return redirect(url_for('email_verification.verification_pending', 
+                                      user_id=user.id, 
+                                      user_email=user.email,
+                                      email_sent='true'))
             else:
-                flash('Account created successfully! However, we could not send the verification email. Please contact support.', 'warning')
-            
-            return redirect(url_for('auth.login'))
+                return redirect(url_for('email_verification.verification_pending', 
+                                      user_id=user.id, 
+                                      user_email=user.email,
+                                      email_sent='false'))
             
         except HashingError:
             flash('Error creating account. Please try again.', 'error')
@@ -167,61 +183,6 @@ def signup():
             flash('Error creating account. Please try again.', 'error')
     
     return render_template('auth/signup.html')
-
-@auth_bp.route('/verify-email/<token>')
-def verify_email(token):
-    """Handle email verification."""
-    verification = EmailVerification.get_by_token(token)
-    
-    if not verification:
-        flash('Invalid verification token.', 'error')
-        return redirect(url_for('auth.login'))
-    
-    if verification.is_expired():
-        flash('Verification token has expired. Please request a new one.', 'error')
-        return redirect(url_for('auth.login'))
-    
-    if verification.is_verified:
-        flash('Email address has already been verified. You can now log in.', 'info')
-        return redirect(url_for('auth.login'))
-    
-    # Verify the email
-    verification.verify()
-    flash('Email address verified successfully! You can now log in.', 'success')
-    return redirect(url_for('auth.login'))
-
-@auth_bp.route('/resend-verification', methods=['POST'])
-def resend_verification():
-    """Resend verification email."""
-    user_id = request.form.get('user_id')
-    user_email = request.form.get('user_email')
-    
-    if not user_id or not user_email:
-        flash('Invalid request.', 'error')
-        return redirect(url_for('auth.login'))
-    
-    user = User.query.get(user_id)
-    if not user or user.email != user_email:
-        flash('Invalid request.', 'error')
-        return redirect(url_for('auth.login'))
-    
-    # Check if already verified
-    if EmailVerification.is_email_verified(user.id, user.email):
-        flash('Email address is already verified.', 'info')
-        return redirect(url_for('auth.login'))
-    
-    # Create new verification
-    verification = EmailVerification.create_verification(user.id, user.email)
-    
-    # Send verification email
-    email_sent = send_verification_email(user, verification)
-    
-    if email_sent:
-        flash('Verification email sent! Please check your email and click the verification link.', 'success')
-    else:
-        flash('Could not send verification email. Please try again later.', 'error')
-    
-    return redirect(url_for('auth.login'))
 
 @auth_bp.route('/logout')
 def logout():
