@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    active = db.Column(db.Boolean, default=True, nullable=False)  # Renamed column
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
@@ -72,7 +72,7 @@ class User(UserMixin, db.Model):
     @property
     def is_active(self):
         """Required by Flask-Login."""
-        return self.is_active
+        return self.active  # Updated to use the renamed column
 
     def __repr__(self):
         return f"<User {self.username}>"
