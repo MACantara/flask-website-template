@@ -52,7 +52,7 @@ def dashboard():
     """Admin dashboard with overview statistics."""
     # Get statistics
     total_users = User.query.count()
-    active_users = User.query.filter_by(is_active=True).count()
+    active_users = User.query.filter_by(active=True).count()  # Changed from is_active
     inactive_users = total_users - active_users
 
     # Recent user registrations (last 30 days)
@@ -127,9 +127,9 @@ def users():
     # Filter by status
     status_filter = request.args.get("status", "all")
     if status_filter == "active":
-        users_query = users_query.filter_by(is_active=True)
+        users_query = users_query.filter_by(active=True)  # Changed from is_active
     elif status_filter == "inactive":
-        users_query = users_query.filter_by(is_active=False)
+        users_query = users_query.filter_by(active=False)  # Changed from is_active
     elif status_filter == "admin":
         users_query = users_query.filter_by(is_admin=True)
 
@@ -198,10 +198,10 @@ def toggle_user_status(user_id):
         flash("You cannot deactivate your own account.", "error")
         return redirect(url_for("admin.user_detail", user_id=user_id))
 
-    user.is_active = not user.is_active
+    user.active = not user.active  # Changed from is_active
     db.session.commit()
 
-    status = "activated" if user.is_active else "deactivated"
+    status = "activated" if user.active else "deactivated"  # Changed from is_active
     flash(f"User {user.username} has been {status}.", "success")
 
     return redirect(url_for("admin.user_detail", user_id=user_id))

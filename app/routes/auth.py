@@ -90,7 +90,7 @@ def login():
         ).first()
 
         # Check if user exists and is active
-        if user and user.is_active:
+        if user and user.active:  # Changed from is_active
             # Check email verification status FIRST before validating password
             is_verified, user_id, user_email = check_email_verification_status(user)
             if not is_verified:
