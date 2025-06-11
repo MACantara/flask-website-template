@@ -15,6 +15,7 @@ Flask-Mail
 
 # Authentication and password hashing
 argon2-cffi
+Flask-Login
 
 # Development and debugging
 Flask-DebugToolbar
