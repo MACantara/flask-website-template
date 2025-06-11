@@ -2,6 +2,7 @@ from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_login import LoginManager
 from config import config
 import os
 
@@ -9,6 +10,7 @@ import os
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
+login_manager = LoginManager()
 
 def create_app(config_name=None):
     app = Flask(__name__)
@@ -17,6 +19,23 @@ def create_app(config_name=None):
     config_name = config_name or os.environ.get('FLASK_CONFIG', 'default')
     app.config.from_object(config[config_name])
 
+    # Initialize Flask-Login
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page.'
+    login_manager.login_message_category = 'warning'
+    
+    # User loader callback
+    @login_manager.user_loader
+    def load_user(user_id):
+        if app.config.get('DISABLE_DATABASE', False):
+            return None
+        try:
+            from app.models.user import User
+            return User.query.get(int(user_id))
+        except:
+            return None
+    
     # Initialize extensions only if database is not disabled
     if not app.config.get('DISABLE_DATABASE', False):
         db.init_app(app)
@@ -99,19 +118,10 @@ def create_app(config_name=None):
             from datetime import datetime
             current_date = datetime.now()
             
-            # Get current user for templates
-            current_user = None
-            if session.get('user_id') and not app.config.get('DISABLE_DATABASE', False):
-                try:
-                    from app.models.user import User
-                    current_user = User.query.get(session.get('user_id'))
-                except:
-                    pass
-            
+            # Remove current_user injection since Flask-Login handles it
             return {
                 'current_year': current_date.year,
-                'current_date': current_date,
-                'current_user': current_user
+                'current_date': current_date
             }
 
     # Make hCaptcha available in templates
